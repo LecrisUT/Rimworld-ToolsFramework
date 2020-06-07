@@ -5,10 +5,10 @@
 *.ide-shm
 *.ide-wal
 .vs
-Source/ModName/.vs
-Source/ModName/ModName.csproj.user
-Source/ModName/obj
-Source/ModName/Properties/AssemblyInfo.cs
-ModName.rar
-1.1/Assemblies/ModName.pdb
-1.1/Assemblies/ModName.dll
+Source/ToolsFramework/.vs
+Source/ToolsFramework/ToolsFramework.csproj.user
+Source/ToolsFramework/obj
+Source/ToolsFramework/Properties/AssemblyInfo.cs
+ToolsFramework.rar
+1.1/Assemblies/ToolsFramework.pdb
+1.1/Assemblies/ToolsFramework.dll
