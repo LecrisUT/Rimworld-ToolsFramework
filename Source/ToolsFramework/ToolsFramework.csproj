@@ -55,6 +55,19 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseMod.cs" />
+    <Compile Include="DefOf\Tools_StatCategoryDefOf.cs" />
+    <Compile Include="Extensions\Utility.cs" />
+    <Compile Include="Extensions\JobModifier.cs" />
+    <Compile Include="Extensions\ToolTypeModifier.cs" />
+    <Compile Include="DefModExtension\ToolProperties.cs" />
+    <Compile Include="Def\ToolType.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Comps\ToolUse.cs" />
+    <Compile Include="DefOf\Tools_StatDefOf.cs" />
+    <Compile Include="Stats\StatWorker_ToolWearFactor.cs" />
+    <Compile Include="Stats\StatWorker_EstimatedLifespan.cs" />
+    <Compile Include="Tool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

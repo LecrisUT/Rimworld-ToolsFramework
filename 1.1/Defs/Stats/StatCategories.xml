@@ -1,0 +1,10 @@
+<Defs>
+
+    <StatCategoryDef>
+        <defName>Tools</defName>
+        <label>[StatCategoryDef]Tool</label>
+        <displayOrder>29</displayOrder>
+        <displayAllByDefault>true</displayAllByDefault>
+    </StatCategoryDef>
+
+</Defs>
