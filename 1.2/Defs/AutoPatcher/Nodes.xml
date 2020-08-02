@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <AutoPatcher.AP_StatPatch>
+        <defName>ToolsFramework_StatPatch</defName>
+        <HelperType>ToolsFramework.AutoPatcher.StatPatch</HelperType>
+    </AutoPatcher.AP_StatPatch>
+
+    <AutoPatcher.AP_ToilPatch>
+        <defName>ToolsFramework_ToilPatch</defName>
+        <HelperType>ToolsFramework.AutoPatcher.ToilPatch</HelperType>
+    </AutoPatcher.AP_ToilPatch>
+
+    <AutoPatcher.HarmonyToil>
+        <defName>ToolsFramework_ToilInsert</defName>
+        <PatcherType>ToolsFramework.AutoPatcher.ToilInsert</PatcherType>
+        <PrepareMethodName>Prepare</PrepareMethodName>
+        <PostfixName>Postfix</PostfixName>
+    </AutoPatcher.HarmonyToil>
+
+    <ToolsFramework.AutoPatcher.WorkGiver_EndNode>
+        <defName>ToolsFramework_WorkGiver_EndNode</defName>
+    </ToolsFramework.AutoPatcher.WorkGiver_EndNode>
+
+    <ToolsFramework.AutoPatcher.JobDef_EndNode>
+        <defName>ToolsFramework_JobDef_EndNode</defName>
+    </ToolsFramework.AutoPatcher.JobDef_EndNode>
+</Defs>

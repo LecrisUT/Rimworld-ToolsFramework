@@ -1,0 +1,25 @@
+<Defs>
+
+
+    <JobDef>
+        <defName>OptimizeTools</defName>
+        <driverClass>ToolsFramework.JobDriver_PickTool</driverClass>
+        <reportString>optimizing tool loadout</reportString>
+        <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    </JobDef>
+
+    <JobDef>
+        <defName>PickTool</defName>
+        <driverClass>ToolsFramework.JobDriver_PickTool</driverClass>
+        <reportString>taking tool: TargetA.</reportString>
+        <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    </JobDef>
+
+    <!--JobDef>
+        <defName>DropSurvivalTool</defName>
+        <driverClass>SurvivalTools.JobDriver_DropSurvivalTool</driverClass>
+        <reportString>dropping tool: TargetA.</reportString>
+        <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    </JobDef-->
+
+</Defs>

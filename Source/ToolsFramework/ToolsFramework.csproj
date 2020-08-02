@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\1.1\Assemblies\</OutputPath>
+    <OutputPath>..\..\1.2\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,11 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Krafs.Rimworld.Ref">
-      <Version>1.1.2654</Version>
-    </PackageReference>
     <PackageReference Include="Lib.Harmony">
-      <Version>2.0.1</Version>
+      <Version>2.0.2</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -55,16 +52,43 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\JobMaker.cs" />
+    <Compile Include="AI\JobDriver_PickTool.cs" />
+    <Compile Include="Alerts\Alert_ToolNeedsReplacing.cs" />
     <Compile Include="BaseMod.cs" />
-    <Compile Include="DefOf\Tools_StatCategoryDefOf.cs" />
+    <Compile Include="Comps\Map_ToolTracker.cs" />
+    <Compile Include="Comps\Pawn_ToolTracker.cs" />
+    <Compile Include="DefOf\ThingCategoryDefOf.cs" />
+    <Compile Include="DefOf\JobDefOf.cs" />
+    <Compile Include="DefOf\StatCategoryDefOf.cs" />
+    <Compile Include="DefOf\StatDefOf.cs" />
+    <Compile Include="Def\AutoPatcher\StatPatch.cs" />
+    <Compile Include="Def\AutoPatcher\JobDef_EndNode.cs" />
+    <Compile Include="Def\AutoPatcher\WorkGiver_EndNode.cs" />
+    <Compile Include="Def\AutoPatcher\ToilInsert.cs" />
+    <Compile Include="Def\AutoPatcher\ToilPatch.cs" />
+    <Compile Include="Extensions\RimworldExtensions.cs" />
+    <Compile Include="Extensions\ToolExtensions.cs" />
+    <Compile Include="Extensions\WorkGiver_Extension.cs" />
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\JobModifier.cs" />
     <Compile Include="Extensions\ToolTypeModifier.cs" />
-    <Compile Include="DefModExtension\ToolProperties.cs" />
+    <Compile Include="Extensions\ToolProperties.cs" />
     <Compile Include="Def\ToolType.cs" />
+    <Compile Include="Handlers\ToolsForcedHandler.cs" />
+    <Compile Include="Handlers\ToolsUsedHandler.cs" />
+    <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
+    <Compile Include="Harmony\DualWield_Ext_Pawn_EquipmentTracker.cs" />
+    <Compile Include="Harmony\Pawn_WorkSettings.cs" />
+    <Compile Include="Harmony\PawnRenderer.cs" />
+    <Compile Include="Harmony\FloatMenuMakerMap.cs" />
+    <Compile Include="Harmony\ThingOwner.cs" />
+    <Compile Include="Harmony\StatRequest.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Comps\ToolUse.cs" />
-    <Compile Include="DefOf\Tools_StatDefOf.cs" />
+    <Compile Include="Stats\StatPart_StuffEffect.cs" />
+    <Compile Include="Stats\StatWorker_ToolEffectivenessFactor.cs" />
+    <Compile Include="Stats\StatWorker_ToolReadinessDelay.cs" />
     <Compile Include="Stats\StatWorker_ToolWearFactor.cs" />
     <Compile Include="Stats\StatWorker_EstimatedLifespan.cs" />
     <Compile Include="Tool.cs" />
@@ -73,6 +97,39 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.tt</DependentUpon>
     </Compile>
+    <Compile Include="ToolAssignment\Dialog_ManageToolAssignments.cs" />
+    <Compile Include="ToolAssignment\PawnColumnWorker_ToolAssignment.cs" />
+    <Compile Include="ToolAssignment\ToolAssignment.cs" />
+    <Compile Include="ToolAssignment\ToolAssignment_Database.cs" />
+    <Compile Include="ToolsFramework_Controller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AutoPatcher">
+      <HintPath>..\..\..\AutoPatcher\1.2\Assemblies\AutoPatcher.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="TransformOnBuild" BeforeTargets="BeforeBuild">

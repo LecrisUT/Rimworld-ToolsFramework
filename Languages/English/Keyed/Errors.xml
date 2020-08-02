@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+    <TF_Error_ChangeToil>Null pawn found:\nToil: {0}\nJobDef: {1}\nJobDriver: {2}</TF_Error_ChangeToil>
+</LanguageData>

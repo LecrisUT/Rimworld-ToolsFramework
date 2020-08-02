@@ -12,7 +12,7 @@ namespace ToolsFramework
             GetSettings<Settings>();
         }
 
-        public override string SettingsCategory() => "SurvivalToolsSettingsCategory".Translate();
+        public override string SettingsCategory() => "ToolsFramework".Translate();
 
         public override void DoSettingsWindowContents(Rect inRect)
         {

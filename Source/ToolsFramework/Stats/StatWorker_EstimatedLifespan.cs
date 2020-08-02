@@ -10,7 +10,7 @@ namespace ToolsFramework
         public static int BaseWearInterval => GenDate.TicksPerHour; // Once per hour of continuous work, or ~40 mins with hardcore
 
         public override bool ShouldShowFor(StatRequest req) =>
-            req.BuildableDef.IsTool() && Settings.toolDegradation;
+            req.BuildableDef.IsTool() && Settings.degradation;
 
         public override float GetValueUnfinalized(StatRequest req, bool applyPostProcess = true)
         {
@@ -21,27 +21,35 @@ namespace ToolsFramework
         public override string GetExplanationUnfinalized(StatRequest req, ToStringNumberSense numberSense)
         {
             Tool tool = req.Thing as Tool;
-            return $"{"StatsReport_BaseValue".Translate()}: {GetBaseEstimatedLifespan(tool, req.BuildableDef).ToString("F1")}";
+            return $"{"StatsReport_BaseValue".Translate()}: {GetBaseEstimatedLifespan(tool, req.BuildableDef, false).ToString("F1")}";
         }
 
-        private float GetBaseEstimatedLifespan(Tool tool, BuildableDef def)
+        private float GetBaseEstimatedLifespan(Tool tool, BuildableDef def, bool withWearFactor = true)
         {
             if (!((ThingDef)def).useHitPoints)
                 return float.PositiveInfinity;
             var props = def.GetModExtension<ToolProperties>();
             // For def
             if (tool == null)
-                return GenDate.TicksToDays(Mathf.RoundToInt((BaseWearInterval * def.GetStatValueAbstract(StatDefOf.MaxHitPoints)) / def.GetStatValueAbstract(Tools_StatDefOf.ToolWearFactor)));
+                return GenDate.TicksToDays(Mathf.RoundToInt(BaseWearInterval * def.GetStatValueAbstract(RimWorld.StatDefOf.MaxHitPoints) /
+                    (withWearFactor ? WearFactor(tool,def) : 1f)));
 
             // For thing
-            return GenDate.TicksToDays(Mathf.RoundToInt((BaseWearInterval * tool.MaxHitPoints) / tool.GetStatValue(Tools_StatDefOf.ToolWearFactor)));
+            return GenDate.TicksToDays(Mathf.RoundToInt(BaseWearInterval * tool.MaxHitPoints / (withWearFactor ? WearFactor(tool, def) : 1f)));
+        }
+
+        private float WearFactor(Tool tool, BuildableDef def)
+        {
+            if (tool == null)
+                return def.GetStatValueAbstract(StatDefOf.ToolWearFactor);
+            return tool.GetStatValue(StatDefOf.ToolWearFactor);
         }
 
         public override string GetExplanationFinalizePart(StatRequest req, ToStringNumberSense numberSense, float finalVal)
         {
             StringBuilder finalBuilder = new StringBuilder();
-            finalBuilder.AppendLine($"{"Settings_ToolDegradationRate".Translate()}: " +
-                $"{(1 / Settings.toolDegradationFactor).ToStringByStyle(ToStringStyle.FloatTwo, ToStringNumberSense.Factor)}");
+            finalBuilder.AppendLine($"{StatDefOf.ToolWearFactor.LabelCap}: " +
+                $"{(1 / WearFactor(req.Thing as Tool, req.BuildableDef)).ToStringByStyle(ToStringStyle.FloatTwo, ToStringNumberSense.Factor)}");
             finalBuilder.AppendLine();
             finalBuilder.AppendLine(base.GetExplanationFinalizePart(req, numberSense, finalVal));
             return finalBuilder.ToString();

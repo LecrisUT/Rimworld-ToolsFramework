@@ -8,6 +8,8 @@ namespace ToolsFramework
         private Tool tool => (Tool)parent;
         public int workTicksDone = 0;
         public bool inUse = false;
+        public bool DrawTool
+            => Settings.draw && inUse;
         public Pawn HoldingPawn
         {
             get
@@ -33,7 +35,7 @@ namespace ToolsFramework
         {
             if (workTicksDone++ < 0)
                 workTicksDone = 0;
-            if (Settings.toolDegradation && tool.def.useHitPoints && workTicksDone % tool.WorkTicksToDegrade == 0)
+            if (Settings.degradation && tool.def.useHitPoints && workTicksDone % tool.WorkTicksToDegrade == 0)
                     Degrade(tool, HoldingPawn);
         }
         private void Degrade(Thing item, Pawn pawn)

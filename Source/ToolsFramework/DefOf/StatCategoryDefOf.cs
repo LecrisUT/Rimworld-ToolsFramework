@@ -3,7 +3,7 @@
 namespace ToolsFramework
 {
     [DefOf]
-    public static class Tools_StatCategoryDefOf
+    public static class StatCategoryDefOf
     {
         public static StatCategoryDef Tools;
     }
