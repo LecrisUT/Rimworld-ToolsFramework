@@ -73,5 +73,12 @@ namespace ToolsFramework
                 return true;
             return false;
         }
+        public static void DropTool(this Pawn pawn, Tool tool)
+        {
+            if (pawn.inventory.innerContainer.Contains(tool))
+                pawn.inventory.innerContainer.TryDrop(tool, ThingPlaceMode.Direct, out _);
+            else if (pawn.equipment.Contains(tool))
+                pawn.equipment.TryDropEquipment(tool, out _, pawn.PositionHeld, false);
+        }
     }
 }

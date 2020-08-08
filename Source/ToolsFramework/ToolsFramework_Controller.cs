@@ -17,9 +17,6 @@ namespace ToolsFramework
                     tDef.comps = new List<CompProperties>();
                 tDef.comps.Add(new CompProperties(typeof(Pawn_ToolTracker)));
             }
-            // Temp
-            foreach (var tDef in DefDatabase<ThingDef>.AllDefs.Where(x => x.stuffProps != null))
-                tDef.stuffProps.statFactors.Add(new StatModifier() { stat = StatDefOf.Tool_Hardness, value = Random.Range(0.5f,1.5f) });
         }
     }
 }

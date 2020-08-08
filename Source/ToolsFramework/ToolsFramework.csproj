@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\1.2\Assemblies\</OutputPath>
+    <OutputPath>..\..\1.1\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,6 +52,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\JobDriver_ReturnToolToContainer.cs" />
+    <Compile Include="AI\JobDriver_ReturnToolToCell.cs" />
     <Compile Include="AI\JobMaker.cs" />
     <Compile Include="AI\JobDriver_PickTool.cs" />
     <Compile Include="Alerts\Alert_ToolNeedsReplacing.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Def\AutoPatcher\ToilPatch.cs" />
     <Compile Include="Extensions\RimworldExtensions.cs" />
     <Compile Include="Extensions\ToolExtensions.cs" />
+    <Compile Include="Extensions\Job_Extension_Opportunistic.cs" />
     <Compile Include="Extensions\WorkGiver_Extension.cs" />
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\JobModifier.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="Def\ToolType.cs" />
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
+    <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_Ext_Pawn_EquipmentTracker.cs" />
     <Compile Include="Harmony\Pawn_WorkSettings.cs" />
@@ -109,7 +113,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="AutoPatcher">
-      <HintPath>..\..\..\AutoPatcher\1.2\Assemblies\AutoPatcher.dll</HintPath>
+      <HintPath>..\..\..\AutoPatcher\1.1\Assemblies\AutoPatcher.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

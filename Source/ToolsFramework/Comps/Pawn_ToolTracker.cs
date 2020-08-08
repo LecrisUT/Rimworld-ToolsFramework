@@ -12,7 +12,7 @@ namespace ToolsFramework
         private Pawn Pawn => (Pawn)parent;
 
         public Tool toolInUse = null;
-        public Tool memoryTool = null;
+        public List<Tool> memoryTool = new List<Tool>();
         public ThingWithComps memoryEquipment = null;
         public ThingWithComps memoryEquipmentOffHand = null;
 
@@ -59,14 +59,11 @@ namespace ToolsFramework
             if (Settings.optimization && Pawn.workSettings.EverWork && rareTick % Settings.optimizationDelay == 0 &&
                 !NecessaryToolTypes.EnumerableNullOrEmpty() && Pawn.jobs is Pawn_JobTracker jobTracker &&
                 Pawn.MapHeld?.GetComponent<Map_ToolTracker>() is Map_ToolTracker mapTracker && !mapTracker.StoredTools.EnumerableNullOrEmpty() &&
-                !jobTracker.AllJobs().Any(t=>t.def == JobDefOf.OptimizeTools))
+                jobTracker.curJob.def != JobDefOf.OptimizeTools &&
+                !jobTracker.jobQueue.Any(t => t.job.def == JobDefOf.OptimizeTools))
             {
                 var queue = new List<Job>();
-                Job optimizeJob = new Job(JobDefOf.OptimizeTools)
-                {
-                    count = 1,
-                    checkEncumbrance = true,
-                };
+                var toolsToPick = new List<Tool>();
                 foreach (var tool in usedHandler.HeldToolsList.Where(t => !usedHandler.BestTool.ContainsValue(t)))
                 {
                     Job job = Pawn.PutAwayTool(tool);
@@ -78,7 +75,7 @@ namespace ToolsFramework
                     if (mapTracker.BestTools.TryGetValue(toolType, out var tool) &&
                         (!usedHandler.BestTool.TryGetValue(toolType, out var currTool) || tool[toolType] > currTool[toolType]))
                     {
-                        optimizeJob.AddQueuedTarget(TargetIndex.A, tool);
+                        toolsToPick.Add(tool);
                         if (currTool != null)
                         {
                             Job job = Pawn.PutAwayTool(tool);
@@ -87,9 +84,10 @@ namespace ToolsFramework
                         }
                     }
                 }
-                if (!optimizeJob.GetTargetQueue(TargetIndex.A).NullOrEmpty())
+                var optimizeJob = Pawn.TakeTool(toolsToPick);
+                if (optimizeJob != null)
                 {
-                    optimizeJob.targetA = optimizeJob.targetQueueA.First();
+                    optimizeJob.def = JobDefOf.OptimizeTools;
                     queue.Add(optimizeJob);
                 }
                 foreach (var job in queue)
@@ -109,7 +107,7 @@ namespace ToolsFramework
         public override void PostExposeData()
         {
             Scribe_References.Look(ref toolInUse, "toolInUse");
-            Scribe_References.Look(ref memoryTool, "memoryTool");
+            Scribe_Collections.Look(ref memoryTool, "memoryTool");
             Scribe_References.Look(ref memoryEquipment, "memoryEquipment");
             Scribe_References.Look(ref memoryEquipmentOffHand, "memoryEquipmentOffHand");
             Scribe_Deep.Look(ref toolAssignment, "toolAssignment", new object[0]);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace ToolsFramework
 {
@@ -89,6 +90,39 @@ namespace ToolsFramework
                 }
             }
             return tool;
+        }
+        public Tool ClosestTool(ToolType toolType, IntVec3 pos)
+        {
+            Tool tool = null;
+            float bestDist = float.MaxValue;
+            foreach (var currTool in StoredTools.Where(t=>t.ToolProperties.ToolTypes.Contains(toolType)))
+            {
+                if (!Distance(currTool, pos, out float dist))
+                    continue;
+                if (dist<bestDist)
+                {
+                    bestDist = dist;
+                    tool = currTool;
+                }
+            }
+            return tool;
+        }
+        private static bool Distance(Thing target, IntVec3 source, out float dist)
+        {
+            dist = float.MaxValue;
+            if (Settings.opportunisticTakeTool_calcPath)
+            {
+                var path = target.Map.pathFinder.FindPath(source, target,
+                                                           TraverseParms.For(TraverseMode.PassDoors, Danger.Some),
+                                                           PathEndMode.Touch);
+                bool found = path.Found;
+                if (found)
+                    dist = path.TotalCost * 2;
+                path.ReleaseToPool();
+                return found;
+            }
+            dist = Mathf.Sqrt(source.DistanceToSquared(target.Position)) * 2;
+            return true;
         }
         public override void ExposeData()
         {

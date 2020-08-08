@@ -27,12 +27,8 @@ namespace ToolsFramework.Harmony
                     opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("PickUp".Translate(tool.Label, tool) + "AsTool".Translate() + " (" + "ApparelForcedLower".Translate() + ")", delegate
                     {
                         tool.SetForbidden(value: false, warnOnFail: false);
-                        Job job9 = new Job(JobDefOf.PickTool, tool)
-                        {
-                            count = 1,
-                            checkEncumbrance = true,
-                        };
-                        pawn.jobs.TryTakeOrderedJob(job9);
+                        var job = pawn.TakeTool(tool);
+                        pawn.jobs.TryTakeOrderedJob(job);
                     }, MenuOptionPriority.High), pawn, tool));
                 }
             }

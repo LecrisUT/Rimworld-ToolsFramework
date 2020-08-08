@@ -84,6 +84,7 @@ namespace ToolsFramework.AutoPatcher
                 if (equipTool)
                     pawn.EquipTool(tool);
                 tool.ToolUse.inUse = true;
+                Log.Message($"Test 0: {pawn} : {tool} : {tracker.memoryTool.FirstOrFallback()}: {tool.ToolUse.inUse}");
             });
             toil.AddFinishAction(delegate
             {

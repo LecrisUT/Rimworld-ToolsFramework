@@ -8,5 +8,10 @@ namespace ToolsFramework
     {
         public static JobDef OptimizeTools;
         public static JobDef PickTool;
+
+        // Opportunistic Jobs
+        public static JobDef TakeTempTool;
+        public static JobDef ReturnToolToCell;
+        public static JobDef ReturnToolToContainer;
     }
 }

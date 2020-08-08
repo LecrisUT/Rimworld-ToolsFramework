@@ -33,10 +33,11 @@ namespace ToolsFramework
         }
         public virtual void Use()
         {
+            Log.Message($"Test 0.2: {HoldingPawn} : {tool} : {HoldingPawn.GetComp<Pawn_ToolTracker>().memoryTool.FirstOrFallback()}");
             if (workTicksDone++ < 0)
                 workTicksDone = 0;
             if (Settings.degradation && tool.def.useHitPoints && workTicksDone % tool.WorkTicksToDegrade == 0)
-                    Degrade(tool, HoldingPawn);
+                Degrade(tool, HoldingPawn);
         }
         private void Degrade(Thing item, Pawn pawn)
         {

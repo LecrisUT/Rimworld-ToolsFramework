@@ -23,6 +23,13 @@ namespace ToolsFramework
         public static int optimizationDelay = 1;
         public static int mapTrackerDelay = 250;
 
+        public static bool opportunisticToolJobs = true;
+        public static bool opportunisticReturnTool = true;
+        public static bool opportunisticReturnTool_onlyMemory = true;
+        public static bool opportunisticTakeTool = true;
+        public static bool opportunisticTakeTool_calcPath = true;
+
+
         public void DoWindowContents(Rect wrect)
         {
             Listing_Standard options = new Listing_Standard();
@@ -97,6 +104,30 @@ namespace ToolsFramework
                     tooltip: "TF_mapTrackerDelay_tooltip".Translate());
                 mapTrackerDelay = Mathf.RoundToInt(options.Slider((float)mapTrackerDelay / tickUnits, 1, 200f) * tickUnits);
             }
+            options.Gap();
+            options.CheckboxLabeled("TF_opportunisticToolJobs".Translate(), ref opportunisticToolJobs, "TF_opportunisticToolJobs_tooltip".Translate());
+            if (opportunisticToolJobs)
+            {
+                options.Gap();
+                options.CheckboxLabeled("TF_opportunisticReturnTool".Translate(), ref opportunisticReturnTool, "TF_opportunisticReturnTool_tooltip".Translate());
+                if (opportunisticReturnTool)
+                {
+                    options.Gap();
+                    options.CheckboxLabeled("TF_opportunisticReturnTool_onlyMemory".Translate(), ref opportunisticReturnTool_onlyMemory, "TF_opportunisticReturnTool_onlyMemory_tooltip".Translate());
+                }
+                options.Gap();
+                options.CheckboxLabeled("TF_opportunisticTakeTool".Translate(), ref opportunisticTakeTool, "TF_opportunisticTakeTool_tooltip".Translate());
+                if (opportunisticTakeTool)
+                {
+                    options.Gap();
+                    if (ModsConfig.IsActive("fluffy.colonymanager"))
+                    {
+                        options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
+                    }
+                    else
+                        options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
+                }
+            }
             options.End();
 
             Mod.GetSettings<Settings>().Write();
@@ -132,6 +163,12 @@ namespace ToolsFramework
             Scribe_Values.Look(ref optimization, "optimization", true);
             Scribe_Values.Look(ref optimizationDelay, "optimizationDelay", 1);
             Scribe_Values.Look(ref mapTrackerDelay, "mapTrackerDelay", 250);
+
+            Scribe_Values.Look(ref opportunisticToolJobs, "opportunisticToolJobs", true);
+            Scribe_Values.Look(ref opportunisticReturnTool, "opportunisticReturnTool", true);
+            Scribe_Values.Look(ref opportunisticReturnTool_onlyMemory, "opportunisticReturnTool_onlyMemory", true);
+            Scribe_Values.Look(ref opportunisticTakeTool, "opportunisticTakeTool", true);
+            Scribe_Values.Look(ref opportunisticTakeTool_calcPath, "opportunisticTakeTool_calcPath", true);
         }
     }
 }

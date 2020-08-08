@@ -18,6 +18,8 @@ namespace ToolsFramework
         private List<Type> jobDriverList;
         private List<Type> jobDriverException;
 
+        public bool emergencyTool = false;
+
         public List<ThingCategoryDef> defaultToolAssignmentTags = new List<ThingCategoryDef>();
 
         public void Initialize()
