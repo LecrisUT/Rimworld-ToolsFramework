@@ -1,10 +1,30 @@
-[url=https://github.com/LecrisUT/Rimworld-ToolsFramework][img]https://raw.githubusercontent.com/LecrisUT/Rimworld-ToolsFramework/master/SteamDescription/GithubLogo.png[/img][/url]
-[url=https://discord.gg/WRv5Sr2][img]https://raw.githubusercontent.com/LecrisUT/Rimworld-ToolsFramework/master/SteamDescription/DiscordLogo.png[/img][/url]
+A rework of how tools works.
+
 
 [h1]Overview[/h1]
+Most features can be customized in the settings. Main features
+[list]
+[*] Using tools from inventory or automatically change to active tool.
+[*] Draw tools being used.
+[*] Tool preparation time.
+[*] Tools affecting individual jobs (e.g. Plant sowing, plant harvesting, etc.)
+[*] Assign tools to each pawn.
+[*] Automatically optimize tool loadout depending on the work assigned.
+[/list]
 
 [h1]Compatibility[/h1]
+Please report compatibility issues on Github or Discord.
 
 [h1]Acknowledgements[/h1]
+The Rimworld modding community.
+
+[h1]Various links[/h1]
+Github for posting issues, comments and contributing to the mod.
+[url=https://github.com/LecrisUT/Rimworld-ToolsFramework][img]https://raw.githubusercontent.com/LecrisUT/Rimworld-ToolsFramework/master/Source/SteamDescription/GithubLogo.png[/img][/url]
+Discord server for chatting.
+[url=https://discord.gg/WRv5Sr2][img]https://raw.githubusercontent.com/LecrisUT/Rimworld-ToolsFramework/master/Source/SteamDescription/DiscordLogo.png[/img][/url]
+Kofi to support me monetaraly.
+[url=https://ko-fi.com/lecris][img]https://raw.githubusercontent.com/LecrisUT/Rimworld-ToolsFramework/master/Source/SteamDescription/Kofi.png[/img][/url]
 
 [h1]Additional Info[/h1]
+Nothing special to report.
