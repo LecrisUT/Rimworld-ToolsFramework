@@ -6,6 +6,23 @@ namespace ToolsFramework
 {
     public static class RimworldExtensions
     {
+        public static bool IsTool(this BuildableDef def)
+            => def is ToolDef || (def is ThingDef tdef && typeof(Tool).IsAssignableFrom(tdef.thingClass));
+        public static bool IsTool(this BuildableDef def, out ToolProperties toolProperties)
+        {
+            toolProperties = null;
+            if (def is ToolDef toolDef)
+            {
+                toolProperties = toolDef.ToolProperties;
+                return toolProperties != null;
+            }
+            if (def is ThingDef thingDef && typeof(Tool).IsAssignableFrom(thingDef.thingClass))
+            {
+                toolProperties = thingDef.GetModExtension<ToolProperties>();
+                return toolProperties != null;
+            }
+            return false;
+        }
         public static bool CanUseTools(this Pawn pawn)
             => pawn.CanUseTools(out _);
         public static bool CanUseTools(this Pawn pawn, out Pawn_ToolTracker tracker)
@@ -17,7 +34,7 @@ namespace ToolsFramework
         }
         public static void EquipTool(this Pawn pawn, Tool tool)
         {
-            if (!pawn.CanUseTools(out var tracker))
+            if (!pawn.CanUseTools(out var tracker) || !tracker.usedHandler.HeldTools.Contains(tool))
                 return;
             bool equipTool = true;
             var equipment = pawn.equipment;
@@ -48,20 +65,29 @@ namespace ToolsFramework
                 return;
             var tool = tracker.toolInUse;
             var equipment = pawn.equipment;
+            var mainEquipment = tracker.memoryEquipment;
+            var offhandEquipment = tracker.memoryEquipmentOffHand;
             // tracker.transfering = true;
             if (tracker.memoryEquipment != tool && tracker.memoryEquipmentOffHand != tool)
             {
-                equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
-                if (tracker.memoryEquipment != null)
-                    pawn.inventory.innerContainer.TryTransferToContainer(tracker.memoryEquipment, equipment.GetDirectlyHeldThings());
+                if (tracker.usedHandler.HeldTools.Contains(tool))
+                    equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
+                if (mainEquipment != null && pawn.inventory.Contains(mainEquipment))
+                    pawn.inventory.innerContainer.TryTransferToContainer(mainEquipment, equipment.GetDirectlyHeldThings());
 
             }
-            if (tracker.memoryEquipmentOffHand != null)
+            if (offhandEquipment != null)
             {
-                if (!equipment.Contains(tracker.memoryEquipmentOffHand))
-                    equipment.AddOffHandEquipment(tracker.memoryEquipmentOffHand);
+                if (!equipment.Contains(offhandEquipment))
+                {
+                    pawn.inventory.innerContainer.TryTransferToContainer(offhandEquipment, equipment.GetDirectlyHeldThings());
+                    equipment.AddOffHandEquipment(offhandEquipment);
+                }
                 else
-                    equipment.AddOffHandEquipment(tracker.memoryEquipment);
+                {
+                    pawn.inventory.innerContainer.TryTransferToContainer(mainEquipment, equipment.GetDirectlyHeldThings());
+                    equipment.AddOffHandEquipment(mainEquipment);
+                }
             }
             // tracker.transfering = false;
         }

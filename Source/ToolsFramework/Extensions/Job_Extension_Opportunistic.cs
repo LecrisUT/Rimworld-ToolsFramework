@@ -2,9 +2,10 @@
 
 namespace ToolsFramework
 {
-    public class Job_Extension_Opportunistic : DefModExtension
+    public class Job_Extension : DefModExtension
     {
-        public bool isReturnToolJob = false;
+        public bool isPutAwayToolJob = false;
         public bool isTakeToolJob = false;
+        public bool isOpportunistic = false;
     }
 }

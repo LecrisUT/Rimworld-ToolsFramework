@@ -9,8 +9,8 @@ namespace ToolsFramework
     {
         public bool dirtyCache = true;
 
-        private Dictionary<ToolType, Tool> bestTool = new Dictionary<ToolType, Tool>(DefDatabase<ToolType>.DefCount);
-        public IEnumerable<Tool> UsedTools => BestTool.Values;
+        private Dictionary<ToolType, Tool> bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
+        public IEnumerable<Tool> UsedTools => BestTool.Values.Where(t => t != null);
         public Dictionary<ToolType, Tool> BestTool
         {
             get
@@ -30,27 +30,30 @@ namespace ToolsFramework
             }
         }
         public IEnumerable<Tool> HeldTools => heldTools;
+        public int HeldToolsCount
+        {
+            get
+            {
+                if (dirtyCache)
+                    Update();
+                return heldTools.Count;
+            }
+        }
         private void Update()
         {
-            bestTool = new Dictionary<ToolType, Tool>();
-            var prevVal = new Dictionary<ToolType, float>(DefDatabase<ToolType>.DefCount);
-            DefDatabase<ToolType>.AllDefs.Do(t => prevVal.Add(t, 0f));
+            bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
             foreach (var currTool in heldTools)
-            {
-                var currProp = currTool.ToolProperties;
-                foreach (var toolType in currTool.ToolProperties.toolTypesValue.Select(t=>t.toolType))
+                foreach (var toolType in currTool.ToolTypes)
                 {
                     var currVal = currTool.GetValue(toolType);
-                    if (currVal > 1f && currVal > prevVal[toolType])
-                        bestTool.SetOrAdd(toolType, currTool);
+                    if (currVal > 1f && currVal > bestTool[toolType].GetValue(toolType, 0f))
+                        bestTool[toolType] = currTool;
                 }
-            }
             dirtyCache = false;
         }
 
         public void ExposeData()
         {
-            Scribe_Collections.Look(ref bestTool, "bestTool", LookMode.Reference, LookMode.Reference);
             Scribe_Collections.Look(ref heldTools, "heldTools", LookMode.Reference);
         }
     }

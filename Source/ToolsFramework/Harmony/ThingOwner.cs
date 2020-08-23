@@ -17,7 +17,7 @@ namespace ToolsFramework.Harmony
             if (pawn != null && pawn.CanUseTools(out var tracker) && !tracker.transfering)
             {
                 tracker.usedHandler.HeldToolsList.AddDistinct(tool);
-                if (pawn.CurJobDef.IsTakingTool())
+                if (pawn.CurJobDef.IsTakingTempTool())
                     tracker.memoryTool.Add(tool);
             }
         }

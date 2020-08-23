@@ -35,6 +35,12 @@ namespace ToolsFramework.Harmony
             _ = Transpiler(null);
             return StatRequest.ForEmpty();
         }
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(StatRequest), "For", new Type[] { typeof(BuildableDef), typeof(ThingDef), typeof(QualityCategory) })]
+        public static StatRequest For(ToolType toolType, ThingDef stuffDef, QualityCategory quality = QualityCategory.Normal)
+        {
+            return StatRequest.ForEmpty();
+        }
     }
     [HarmonyPatch]
     public static class Patch_StatRequest_StatBases
@@ -43,12 +49,17 @@ namespace ToolsFramework.Harmony
         {
             return AccessTools.PropertyGetter(typeof(StatRequest), "StatBases");
         }
-        public static bool Prefix(ref List<StatModifier> __result, Def ___defInt)
+        public static bool Prefix(ref List<StatModifier> __result, Def ___defInt, Thing ___thingInt)
         {
             if (___defInt is ToolType toolType)
             {
+                var tool = ___thingInt as Tool;
+                var thingDef = ___thingInt?.def;
                 var modifiers = new List<StatModifier>(toolType.workStatFactors);
-                modifiers.Add(new StatModifier() { stat = StatDefOf.ToolEffectivenessFactor, value = 1f });
+                var effectiveness = new StatModifier() { stat = StatDefOf.ToolEffectivenessFactor, value = 1f };
+                effectiveness.value *= thingDef?.statBases.GetStatFactorFromList(StatDefOf.ToolEffectivenessFactor) ?? 1f;
+                effectiveness.value *= tool?.ToolProperties?.toolTypesValue.GetToolTypeValueFromList(toolType, 1f) ?? 1f;
+                modifiers.Add(effectiveness);
                 __result = modifiers;
                 return false;
             }

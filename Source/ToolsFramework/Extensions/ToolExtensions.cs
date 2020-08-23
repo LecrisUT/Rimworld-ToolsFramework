@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
+using System.Linq;
 using ToolsFramework.Harmony;
 using Verse;
 
@@ -7,8 +8,10 @@ namespace ToolsFramework
 {
     public static class ToolExtensions
     {
-        public static float GetStatValue(this Tool tool, ToolType toolType, StatDef stat, bool applyPostProcess = true)
+        public static float GetStatValue(this Tool tool, ToolType toolType, StatDef stat, bool applyPostProcess = true, float fallback = 0f)
         {
+            if (tool == null)
+                return fallback;
             return stat.Worker.GetValue(tool, toolType, applyPostProcess);
         }
         public static float GetValue(this StatWorker statWorker, Tool tool, ToolType toolType, bool applyPostProcess = true)
@@ -45,19 +48,49 @@ namespace ToolsFramework
                         return modList[i].value;
             return defaultValue;
         }
+        #region ToolDef extenstion
+        public static bool TryGetValue(this ToolProperties toolProp, ToolType toolType, out float val, ThingDef stuffDef = null)
+        {
+            val = 0f;
+            if (!toolProp.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
+                return false;
+            val = modifier.value * toolType.GetStuffEfficiency(stuffDef);
+            return true;
+        }
+        public static float GetValue(this ToolProperties toolProp, ToolType toolType, float fallback = 0f, ThingDef stuffDef = null)
+        {
+            if (toolProp.TryGetValue(toolType, out float val, stuffDef))
+                return val;
+            return fallback;
+        }
+        public static bool TryGetValue(this ToolDef toolDef, ToolType toolType, out float val, ThingDef stuffDef = null)
+        {
+            val = 0f;
+            if (!toolDef.ToolProperties.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
+                return false;
+            val = modifier.value * toolType.GetStuffEfficiency(stuffDef);
+            return true;
+        }
+        public static float GetValue(this ToolDef toolDef, ToolType toolType, float fallback = 0f, ThingDef stuffDef = null)
+        {
+            if (toolDef.TryGetValue(toolType, out float val, stuffDef))
+                return val;
+            return fallback;
+        }
+        #endregion
+        #region Tool extension
         public static bool TryGetValue(this Tool tool, ToolType toolType, out float val)
         {
             val = 0f;
-            var toolProp = tool.ToolProperties;
-            if (!toolProp.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
+            if (tool == null || !tool.ToolTypes.Contains(toolType))
                 return false;
-            val = modifier.value * tool.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor);
+            val = tool.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor);
             return true;
         }
         public static bool TryGetValue(this Tool tool, JobDef job, out float val)
         {
             val = 0f;
-            if (!ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(toolType, out val))
+            if (tool == null || !ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(toolType, out val))
                 return false;
             var toolProp = tool.ToolProperties;
             val *= toolProp.jobBonus.GetJobValueFromList(job, 1f);
@@ -66,7 +99,7 @@ namespace ToolsFramework
         public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float val)
         {
             val = 0f;
-            if (!ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out val))
+            if (tool == null || !ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out val))
                 return false;
             val *= toolType.workStatFactors.GetStatFactorFromList(stat);
             return true;
@@ -89,12 +122,13 @@ namespace ToolsFramework
                 return val;
             return fallback;
         }
-        public static bool CanDrop(this Tool tool) => !tool.IsForced();
         public static bool IsForced(this Tool tool)
         {
             if (!(tool.HoldingPawn is Pawn pawn) || !pawn.CanUseTools(out var tracker))
                 return false;
             return tracker.forcedHandler.ForcedTools.Contains(tool);
         }
+        public static bool CanDrop(this Tool tool) => !tool.IsForced();
+        #endregion
     }
 }

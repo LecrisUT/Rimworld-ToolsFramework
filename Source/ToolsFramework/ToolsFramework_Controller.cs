@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
-using RimWorld;
-using UnityEngine;
+using HarmonyLib;
+using ToolsFramework.Harmony;
 
 namespace ToolsFramework
 {
@@ -16,6 +16,16 @@ namespace ToolsFramework
                 if (tDef.comps == null)
                     tDef.comps = new List<CompProperties>();
                 tDef.comps.Add(new CompProperties(typeof(Pawn_ToolTracker)));
+            }
+            var harmony = new HarmonyLib.Harmony("ToolsFramework");
+            if (ModsConfig.IsActive("roolo.dualwield"))
+            {
+                var myAddOffHand = AccessTools.Method(typeof(Patch_DualWield_Ext_Pawn_EquipmentTracker), nameof(Patch_DualWield_Ext_Pawn_EquipmentTracker.AddOffHandEquipment));
+                var myTryGetOffHand = AccessTools.Method(typeof(Patch_DualWield_Ext_Pawn_EquipmentTracker), nameof(Patch_DualWield_Ext_Pawn_EquipmentTracker.TryGetOffHandEquipment));
+                var AddOffHand = AccessTools.Method("DualWield.Ext_Pawn_EquipmentTracker:AddOffHandEquipment");
+                var TryGetOffHand = AccessTools.Method("DualWield.Ext_Pawn_EquipmentTracker:TryGetOffHandEquipment");
+                HarmonyLib.Harmony.ReversePatch(TryGetOffHand, new HarmonyMethod(myTryGetOffHand), null);
+                HarmonyLib.Harmony.ReversePatch(AddOffHand, new HarmonyMethod(myAddOffHand), null);
             }
         }
     }

@@ -8,17 +8,8 @@ namespace ToolsFramework
 {
     public class Tool : ThingWithComps
     {
-        public Pawn HoldingPawn => ParentHolder?.ParentHolder as Pawn ?? null;
-        private ToolProperties toolProperties;
-        public ToolProperties ToolProperties
-        {
-            get
-            {
-                if (toolProperties == null)
-                    toolProperties = def.GetModExtension<ToolProperties>();
-                return toolProperties;
-            }
-        }
+        public ToolDef ToolDef => def as ToolDef;
+        public Pawn HoldingPawn => ParentHolder?.ParentHolder as Pawn;
         private ToolUse toolUse;
         public ToolUse ToolUse
         {
@@ -29,6 +20,9 @@ namespace ToolsFramework
                 return toolUse;
             }
         }
+        public ToolProperties ToolProperties => ToolDef?.ToolProperties ?? def.GetModExtension<ToolProperties>();
+        public IEnumerable<ToolType> ToolTypes => ToolDef?.ToolTypes ?? ToolProperties?.ToolTypes;
+        public int ToolTypesCount => ToolDef?.ToolTypesCount ?? ToolProperties?.toolTypesValue.Count ?? 0;
 
         private int workTicksToDegrade = -1;
         public int WorkTicksToDegrade
@@ -47,7 +41,6 @@ namespace ToolsFramework
                 return workTicksToDegrade;
             }
         }
-        public IEnumerable<ToolType> ToolTypes => ToolProperties.ToolTypes;
         public float LifeSpan => def.useHitPoints ? 10f : this.GetStatValue(StatDefOf.ToolEstimatedLifespan) * ((float)HitPoints / MaxHitPoints);
         private float baseTotalScore = -1f;
         public float TotalScore
@@ -59,7 +52,7 @@ namespace ToolsFramework
                     baseTotalScore = 0f;
                     foreach (var tooltype in ToolTypes)
                         baseTotalScore += this.GetValue(tooltype);
-                    baseTotalScore /= Mathf.Pow(ToolProperties.ToolTypes.Count(), Settings.ToolTotalScorePow);
+                    baseTotalScore /= Mathf.Pow(ToolTypesCount, Settings.ToolTotalScorePow);
                 }
                 return baseTotalScore * Settings.LifespanScoreCurve.Evaluate(LifeSpan);
             }
@@ -69,12 +62,14 @@ namespace ToolsFramework
             get => !ToolTypes.Contains(toolType) ? 0f : this.GetValue(toolType) * Settings.LifespanScoreCurve.Evaluate(LifeSpan);
         }
 
+        public override string LabelCapNoCount => Label;
+
         public override string Label
         {
             get
             {
                 string label = base.LabelNoCount;
-                if (ToolUse.inUse)
+                if (ToolUse.InUse)
                     label = "InUse".Translate() + label;
                 if (this.IsForced())
                     label += $" ({"ApparelForcedLower".Translate()})";
@@ -84,8 +79,8 @@ namespace ToolsFramework
 
         public override IEnumerable<StatDrawEntry> SpecialDisplayStats()
         {
-            foreach (var modifier in ToolProperties.toolTypesValue)
-                yield return Utility.ToolTypeDrawEntry(this, modifier.toolType, this.GetStatValue(modifier.toolType, StatDefOf.ToolEffectivenessFactor));
+            foreach (var toolType in ToolTypes)
+                yield return Utility.ToolTypeDrawEntry(this, toolType, this.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor));
         }
         public override void Destroy(DestroyMode mode = DestroyMode.Vanish)
         {

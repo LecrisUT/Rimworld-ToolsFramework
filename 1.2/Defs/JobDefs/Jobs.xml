@@ -13,6 +13,11 @@
         <driverClass>ToolsFramework.JobDriver_PickTool</driverClass>
         <reportString>taking tool: TargetA.</reportString>
         <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+        <modExtensions>
+            <li Class="ToolsFramework.Job_Extension">
+                <isTakeToolJob>true</isTakeToolJob>
+            </li>
+        </modExtensions>
     </JobDef>
 
     <!-- Opportunistic Jobs -->
@@ -22,8 +27,9 @@
         <reportString>taking temporary tool: TargetA.</reportString>
         <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
         <modExtensions>
-            <li Class="ToolsFramework.Job_Extension_Opportunistic">
+            <li Class="ToolsFramework.Job_Extension">
                 <isTakeToolJob>true</isTakeToolJob>
+                <isOpportunistic>true</isOpportunistic>
             </li>
         </modExtensions>
     </JobDef>
@@ -34,8 +40,9 @@
         <reportString>Returning tool: TargetA.</reportString>
         <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
         <modExtensions>
-            <li Class="ToolsFramework.Job_Extension_Opportunistic">
-                <isReturnToolJob>true</isReturnToolJob>
+            <li Class="ToolsFramework.Job_Extension">
+                <isPutAwayToolJob>true</isPutAwayToolJob>
+                <isOpportunistic>true</isOpportunistic>
             </li>
         </modExtensions>
     </JobDef>
@@ -46,8 +53,9 @@
         <reportString>Returning tool: TargetA.</reportString>
         <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
         <modExtensions>
-            <li Class="ToolsFramework.Job_Extension_Opportunistic">
-                <isReturnToolJob>true</isReturnToolJob>
+            <li Class="ToolsFramework.Job_Extension">
+                <isPutAwayToolJob>true</isPutAwayToolJob>
+                <isOpportunistic>true</isOpportunistic>
             </li>
         </modExtensions>
     </JobDef>

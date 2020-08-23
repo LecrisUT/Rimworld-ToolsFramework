@@ -11,7 +11,7 @@ namespace ToolsFramework
     {
         public Map_ToolTracker(Map map) : base(map)
         {
-
+            nextOptimizationTick = Find.TickManager.TicksGame;
         }
         public bool dirtyCache = false;
         private List<Tool> storedTools = new List<Tool>();
@@ -29,44 +29,69 @@ namespace ToolsFramework
                 storedTools = value;
             }
         }
-        private Dictionary<ToolType, Tool> bestTools = new Dictionary<ToolType, Tool>(DefDatabase<ToolType>.DefCount);
+
+        private Dictionary<ToolType, Tool> bestTools = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
         public Dictionary<ToolType, Tool> BestTools
         {
             get
             {
                 if (dirtyCache)
                     FindBestTools();
-                ConfirmTools();
                 return bestTools;
             }
         }
-        public int tick = 0;
+        private Dictionary<ThingDef, Tool> bestToolThings = Utility.AllToolDefs.ToDictionary<ThingDef, ThingDef, Tool>(t => t, t => null);
+        public Dictionary<ThingDef, Tool> BestToolThings
+        {
+            get
+            {
+                if (dirtyCache)
+                    FindBestTools();
+                return bestToolThings;
+            }
+        }
+        private Dictionary<ThingDef, List<Tool>> storedToolThings = Utility.AllToolDefs.ToDictionary(t => t, t => new List<Tool>());
+        public Dictionary<ThingDef, List<Tool>> StoredToolThings
+        {
+            get
+            {
+                if (dirtyCache)
+                    FindBestTools();
+                return storedToolThings;
+            }
+        }
+        public int nextOptimizationTick = 0;
         public override void MapComponentTick()
         {
-            if (++tick < 0)
-                tick = 0;
-            if (Settings.optimization && tick % Settings.mapTrackerDelay == 0)
+            if (Settings.optimization && Find.TickManager.TicksGame > nextOptimizationTick)
             {
                 UpdateStoredTools();
-                tick += Rand.Range(0, Mathf.CeilToInt(Settings.mapTrackerDelay / 1000));
+                nextOptimizationTick = Find.TickManager.TicksGame + Settings.mapTrackerDelay;
             }
         }
         public void UpdateStoredTools()
-            => StoredToolsList = map.listerThings.AllThings?.OfType<Tool>()?.Where(t => t.IsInAnyStorage()).ToList() ?? new List<Tool>();
-        public void ConfirmTools()
         {
-            if (bestTools.Values.Any(t => !t.IsInAnyStorage()))
-            {
-                UpdateStoredTools();
-                FindBestTools();
-            }
-
+            var faction = Find.FactionManager.OfPlayer;
+            var reservation = map.reservationManager;
+            storedTools = map.listerThings.AllThings?.OfType<Tool>()?.Where(t => t.IsInAnyStorage() && !t.IsForbidden(faction) && !reservation.IsReservedByAnyoneOf(t, faction)).ToList() ?? new List<Tool>();
+            storedToolThings = Utility.AllToolDefs.ToDictionary(t => t, t => new List<Tool>());
+            foreach (var tool in storedTools)
+                storedToolThings[tool.def].Add(tool);
+            dirtyCache = true;
         }
         public void FindBestTools()
         {
-            bestTools = new Dictionary<ToolType, Tool>(DefDatabase<ToolType>.DefCount);
+            bestToolThings = Utility.AllToolDefs.ToDictionary<ThingDef, ThingDef, Tool>(t => t, t => null);
+            bestTools = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
             foreach (var toolType in DefDatabase<ToolType>.AllDefs)
                 FindBestTool(toolType);
+            foreach (var tool in storedTools)
+            {
+                var toolDef = tool.def;
+                if (!bestToolThings.TryGetValue(toolDef, out var currTool) || tool.TotalScore > currTool.TotalScore)
+                    bestToolThings.SetOrAdd(toolDef, tool);
+            }
+            dirtyCache = false;
         }
         public void FindBestTool(ToolType toolType)
         {
@@ -91,15 +116,15 @@ namespace ToolsFramework
             }
             return tool;
         }
-        public Tool ClosestTool(ToolType toolType, IntVec3 pos)
+        public Tool ClosestTool(ToolType toolType, IntVec3 pos, Pawn pawn = null)
         {
             Tool tool = null;
             float bestDist = float.MaxValue;
-            foreach (var currTool in StoredTools.Where(t=>t.ToolProperties.ToolTypes.Contains(toolType)))
+            foreach (var currTool in StoredTools)
             {
-                if (!Distance(currTool, pos, out float dist))
+                if (currTool.IsForbidden(pawn) || !currTool.TryGetValue(toolType, out float val) || val < 1f || !Distance(currTool, pos, out float dist))
                     continue;
-                if (dist<bestDist)
+                if (dist < bestDist)
                 {
                     bestDist = dist;
                     tool = currTool;
@@ -112,9 +137,7 @@ namespace ToolsFramework
             dist = float.MaxValue;
             if (Settings.opportunisticTakeTool_calcPath)
             {
-                var path = target.Map.pathFinder.FindPath(source, target,
-                                                           TraverseParms.For(TraverseMode.PassDoors, Danger.Some),
-                                                           PathEndMode.Touch);
+                var path = target.Map.pathFinder.FindPath(source, target, TraverseParms.For(TraverseMode.PassDoors, Danger.Some), PathEndMode.Touch);
                 bool found = path.Found;
                 if (found)
                     dist = path.TotalCost * 2;
@@ -126,8 +149,8 @@ namespace ToolsFramework
         }
         public override void ExposeData()
         {
-            Scribe_Values.Look(ref tick, "tick");
-            Scribe_Collections.Look(ref storedTools, "storedTools");
+            Scribe_Values.Look(ref nextOptimizationTick, "nextOptimizationTick");
+            Scribe_Collections.Look(ref storedTools, "storedTools", LookMode.Reference);
         }
     }
 }

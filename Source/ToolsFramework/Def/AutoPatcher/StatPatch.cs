@@ -49,14 +49,16 @@ namespace ToolsFramework.AutoPatcher
             Job_Info = AccessTools.Field(type, "job");
             return Job_Info != null;
         }
-        public static bool Transpile(ref List<CodeInstruction> instuctionList, int pos, StatDef stat)
+        public static bool Transpile(ref List<CodeInstruction> instuctionList, ILGenerator generator, int pos, StatDef stat, out List<(int pos, int offset)> CIOffsets)
         {
+            CIOffsets = new List<(int, int)>();
             if (pos + 2 >= instuctionList.Count ||
                    !instuctionList[pos + 2].Is(OpCodes.Call, GetStatValue_Info) ||
                    !InstructionIsStatDef(instuctionList[pos]))
                 return false;
             instuctionList[pos + 2].operand = thisGetStatValueJob_Info;
             instuctionList.InsertRange(pos + 1, InsertedInstructions);
+            CIOffsets.Add((pos + 1, InsertedInstructions.Count));
             return true;
         }
         private static bool InstructionIsStatDef(CodeInstruction instruction)

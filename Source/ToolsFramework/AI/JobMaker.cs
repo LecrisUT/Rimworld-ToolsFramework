@@ -10,14 +10,10 @@ namespace ToolsFramework
     {
         public static Job PutAwayTool(this Pawn pawn, Tool tool, bool bestLoc = true)
         {
-            Job job;
             if (bestLoc)
-                job = HaulAIUtility.HaulToStorageJob(pawn, tool);
+                return HaulAIUtility.HaulToStorageJob(pawn, tool);
             else
-                job = HaulAIUtility.HaulToStorageJob(pawn, tool);
-            if (job != null)
-                pawn.DropTool(tool);
-            return job;
+                return HaulAIUtility.HaulToStorageJob(pawn, tool);
         }
 
         public static Job TakeTool(this Pawn pawn, Tool tool)
@@ -27,20 +23,6 @@ namespace ToolsFramework
                 count = 1,
                 checkEncumbrance = true,
             };
-        }
-        public static Job TakeTool(this Pawn pawn, List<Tool> tools)
-        {
-            if (tools.NullOrEmpty())
-                return null;
-            var job = new Job(JobDefOf.PickTool)
-            {
-                count = 1,
-                checkEncumbrance = true,
-            };
-            foreach (var tool in tools)
-                job.AddQueuedTarget(TargetIndex.A, tool);
-            job.targetA = job.targetQueueA.First();
-            return job;
         }
     }
 }

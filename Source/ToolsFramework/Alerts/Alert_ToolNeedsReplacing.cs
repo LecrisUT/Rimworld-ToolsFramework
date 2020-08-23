@@ -1,7 +1,6 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Verse;
 
 namespace ToolsFramework
@@ -12,6 +11,7 @@ namespace ToolsFramework
         public Alert_ToolNeedsReplacing()
         {
             defaultPriority = AlertPriority.Medium;
+            nextAlertTick = Find.TickManager.TicksGame;
         }
         private List<Pawn> culpritsResult = new List<Pawn>();
 
@@ -20,7 +20,7 @@ namespace ToolsFramework
             get
             {
                 culpritsResult.Clear();
-                foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned.Where(t=>t.HasDamagedTools()))
+                foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned.Where(t => t.HasDamagedTools()))
                     culpritsResult.Add(pawn);
                 return culpritsResult;
             }
@@ -38,17 +38,15 @@ namespace ToolsFramework
             "ToolsNeedReplacing".Translate();
 
         private AlertReport cachedReport = false;
-        private int tick = 0;
+        private int nextAlertTick = 0;
         private AlertReport Report
         {
             get
             {
-                if (++tick < 0)
-                    tick = 0;
-                if (tick % Settings.alertToolNeedsReplacing_Delay == 0)
+                if (Find.TickManager.TicksGame > nextAlertTick)
                 {
                     cachedReport = AlertReport.CulpritsAre(WorkersDamagedTools);
-                    tick += Rand.Range(0, Mathf.CeilToInt(Settings.alertToolNeedsReplacing_Delay / 1000));
+                    nextAlertTick = Find.TickManager.TicksGame + Settings.alertToolNeedsReplacing_Delay;
                 }
                 return cachedReport;
             }

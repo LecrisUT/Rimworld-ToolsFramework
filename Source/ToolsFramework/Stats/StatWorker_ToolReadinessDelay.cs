@@ -11,8 +11,14 @@ namespace ToolsFramework
 
         public override void FinalizeValue(StatRequest req, ref float val, bool applyPostProcess)
         {
+            var tool = (Tool)req.Thing;
             val *= Settings.equipDelayFactor;
             base.FinalizeValue(req, ref val, applyPostProcess);
+            if (tool!=null &&tool.HoldingPawn is Pawn pawn && pawn.CanUseTools(out var tracker))
+            {
+                var count = tracker.usedHandler.HeldToolsCount;
+                val *= count;
+            }
         }
 
         public override string GetExplanationFinalizePart(StatRequest req, ToStringNumberSense numberSense, float finalVal)

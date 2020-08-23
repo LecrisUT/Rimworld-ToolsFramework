@@ -2,7 +2,7 @@
 
     <StatCategoryDef>
         <defName>Tools</defName>
-        <label>[[LC]ToolsFramework]StatCategoryDef.Tools</label>
+        <label>Tool stats</label>
         <displayOrder>29</displayOrder>
         <displayAllByDefault>true</displayAllByDefault>
     </StatCategoryDef>

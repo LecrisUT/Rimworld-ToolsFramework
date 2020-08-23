@@ -5,9 +5,14 @@ namespace ToolsFramework
 {
     public class ToolUse : ThingComp
     {
-        private Tool tool => (Tool)parent;
+        private Tool Tool => (Tool)parent;
         public int workTicksDone = 0;
-        public bool inUse = false;
+        private bool inUse = false;
+        public bool InUse
+        {
+            get => inUse;
+            set => inUse = value;
+        }
         public bool DrawTool
             => Settings.draw && inUse;
         public Pawn HoldingPawn
@@ -23,8 +28,6 @@ namespace ToolsFramework
         }
         public override void CompTick()
         {
-            if (inUse)
-                Use();
         }
         public override void PostExposeData()
         {
@@ -33,11 +36,10 @@ namespace ToolsFramework
         }
         public virtual void Use()
         {
-            Log.Message($"Test 0.2: {HoldingPawn} : {tool} : {HoldingPawn.GetComp<Pawn_ToolTracker>().memoryTool.FirstOrFallback()}");
             if (workTicksDone++ < 0)
                 workTicksDone = 0;
-            if (Settings.degradation && tool.def.useHitPoints && workTicksDone % tool.WorkTicksToDegrade == 0)
-                Degrade(tool, HoldingPawn);
+            if (Settings.degradation && Tool.def.useHitPoints && workTicksDone % Tool.WorkTicksToDegrade == 0)
+                Degrade(Tool, HoldingPawn);
         }
         private void Degrade(Thing item, Pawn pawn)
         {

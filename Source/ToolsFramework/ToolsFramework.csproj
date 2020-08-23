@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\1.1\Assemblies\</OutputPath>
+    <OutputPath>..\..\1.2\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,13 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Krafs.Rimworld.Ref">
+      <Version>1.2.2719</Version>
+    </PackageReference>
     <PackageReference Include="Lib.Harmony">
       <Version>2.0.2</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="UnlimitedHugs.Rimworld.HugsLib">
-      <Version>7.2.1</Version>
+      <Version>8.0.0</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -52,6 +55,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\JobGiver_OptimizeTools.cs" />
     <Compile Include="AI\JobDriver_ReturnToolToContainer.cs" />
     <Compile Include="AI\JobDriver_ReturnToolToCell.cs" />
     <Compile Include="AI\JobMaker.cs" />
@@ -67,8 +71,8 @@
     <Compile Include="Def\AutoPatcher\StatPatch.cs" />
     <Compile Include="Def\AutoPatcher\JobDef_EndNode.cs" />
     <Compile Include="Def\AutoPatcher\WorkGiver_EndNode.cs" />
-    <Compile Include="Def\AutoPatcher\ToilInsert.cs" />
     <Compile Include="Def\AutoPatcher\ToilPatch.cs" />
+    <Compile Include="Def\ToolDef.cs" />
     <Compile Include="Extensions\RimworldExtensions.cs" />
     <Compile Include="Extensions\ToolExtensions.cs" />
     <Compile Include="Extensions\Job_Extension_Opportunistic.cs" />
@@ -80,12 +84,17 @@
     <Compile Include="Def\ToolType.cs" />
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
+    <Compile Include="Harmony\JobGiver_AwesomeInventory_TakeArm.cs" />
+    <Compile Include="Harmony\StatWorker.cs" />
+    <Compile Include="Harmony\ThingDef.cs" />
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_Ext_Pawn_EquipmentTracker.cs" />
+    <Compile Include="Harmony\ForbidUtility.cs" />
     <Compile Include="Harmony\Pawn_WorkSettings.cs" />
     <Compile Include="Harmony\PawnRenderer.cs" />
     <Compile Include="Harmony\FloatMenuMakerMap.cs" />
+    <Compile Include="Harmony\ThingFilter.cs" />
     <Compile Include="Harmony\ThingOwner.cs" />
     <Compile Include="Harmony\StatRequest.cs" />
     <Compile Include="Settings.cs" />
@@ -108,30 +117,8 @@
     <Compile Include="ToolsFramework_Controller.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="AutoPatcher">
-      <HintPath>..\..\..\AutoPatcher\1.1\Assemblies\AutoPatcher.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\..\..\AutoPatcher\1.2\Assemblies\AutoPatcher.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

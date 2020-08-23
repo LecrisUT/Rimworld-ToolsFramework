@@ -2,6 +2,8 @@
 <LanguageData>
     <ToolsFramework>[LC]Tools Framework</ToolsFramework>
 
-    <InUse>in use</InUse>
+    <InUse>in use </InUse>
     <AsTool>as a tool</AsTool>
+    <NoTool>no tool</NoTool>
+    <ToolEffect>tool effect</ToolEffect>
 </LanguageData>

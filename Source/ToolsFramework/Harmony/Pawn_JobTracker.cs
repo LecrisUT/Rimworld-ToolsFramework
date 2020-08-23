@@ -90,7 +90,6 @@ namespace ToolsFramework.Harmony
                 {
                     toolJob = pawn.PutAwayTool(tool, false);
                     TransformJob(ref toolJob);
-                    Log.Message($"Test 1.0: {pawn} : {currJob} : {pawn.CurJob} : {pawn.jobs.jobQueue.Count}\n{tracker.memoryTool.Count} : {pawn.jobs.startingNewJob}\n{toolJob} : {tool}");
                     return true;
                 }
                 return false;
@@ -100,15 +99,14 @@ namespace ToolsFramework.Harmony
             {
                 if (!toolType.emergencyTool && !jobDef.allowOpportunisticPrefix)
                     return false;
-                if (tracker.usedHandler.BestTool.ContainsKey(toolType))
+                if (tracker.usedHandler.BestTool[toolType] != null)
                     return false;
                 var mapTracker = pawn.MapHeld.GetComponent<Map_ToolTracker>();
-                var tool = mapTracker.ClosestTool(toolType, pawn.PositionHeld);
+                var tool = mapTracker.ClosestTool(toolType, pawn.PositionHeld, pawn);
                 if (tool != null)
                 {
                     toolJob = pawn.TakeTool(tool);
                     TransformJob(ref toolJob);
-                    Log.Message($"Test 1.1: {pawn} : {currJob} : {pawn.CurJob} : {pawn.jobs.jobQueue.Count}\n{tracker.memoryTool.Count} : {pawn.jobs.startingNewJob}\n{toolJob} : {tool}");
                     return true;
                 }
             }
@@ -135,8 +133,18 @@ namespace ToolsFramework.Harmony
             }
         }
         public static bool IsReturningTool(this JobDef jobDef)
-            => jobDef.GetModExtension<Job_Extension_Opportunistic>()?.isReturnToolJob ?? false;
-        public static bool IsTakingTool(this JobDef jobDef)
-            => jobDef.GetModExtension<Job_Extension_Opportunistic>()?.isTakeToolJob ?? false;
+        {
+            var ext = jobDef?.GetModExtension<Job_Extension>();
+            if (ext == null)
+                return false;
+            return ext.isOpportunistic && ext.isPutAwayToolJob;
+        }
+        public static bool IsTakingTempTool(this JobDef jobDef)
+        {
+            var ext = jobDef?.GetModExtension<Job_Extension>();
+            if (ext == null)
+                return false;
+            return ext.isOpportunistic && ext.isTakeToolJob;
+        }
     }
 }

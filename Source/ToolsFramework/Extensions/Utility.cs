@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Mono.Posix;
 using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace ToolsFramework
 {
     public static class Utility
     {
-        private static HashSet<ThingDef> allToolDefs = new HashSet<ThingDef>();
+        private static HashSet<ThingDef> allToolDefs;
         public static HashSet<ThingDef> AllToolDefs
         {
             get
@@ -18,6 +19,28 @@ namespace ToolsFramework
                 if (allToolDefs.EnumerableNullOrEmpty())
                     allToolDefs = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool()).ToHashSet();
                 return allToolDefs;
+            }
+        }
+        private static Dictionary<StatDef, List<ToolType>> statsToToolType;
+        public static Dictionary<StatDef, List<ToolType>> StatsToToolType
+        {
+            get
+            {
+                if (statsToToolType.EnumerableNullOrEmpty())
+                {
+                    statsToToolType = new Dictionary<StatDef, List<ToolType>>();
+                    foreach (var toolType in ToolType.allToolTypes)
+                        foreach (var stat in toolType.workStatFactors.Select(t => t.stat))
+                        {
+                            if (!statsToToolType.TryGetValue(stat, out var list))
+                            {
+                                statsToToolType.Add(stat, new List<ToolType> { toolType });
+                                continue;
+                            }
+                            list.Add(toolType);
+                        }
+                }
+                return statsToToolType;
             }
         }
         public static Dictionary<WorkGiverDef, List<ToolType>> toolWorkGivers = new Dictionary<WorkGiverDef, List<ToolType>>();
@@ -34,20 +57,19 @@ namespace ToolsFramework
                 return toolWorkGivers;
             }
         }
-        public static bool IsTool(this BuildableDef def)
-            => def is ThingDef tdef && typeof(Tool).IsAssignableFrom(tdef.thingClass);
-        public static string ToolStatDrawEntry(Tool tool, ToolType toolType, float value)
+        public static string ToolStatDrawEntry(Tool tool, ToolType toolType, float value, ThingDef stuffDef = null)
         {
             var stat = StatDefOf.ToolEffectivenessFactor;
             var builder = new StringBuilder(stat.description);
-            builder.AppendLine("\n\n" + stat.Worker.GetExplanationFull(Patch_StatRequest_For.For(tool, toolType), stat.toStringNumberSense, value));
+            var statReq = tool == null ? Patch_StatRequest_For.For(toolType, stuffDef) : Patch_StatRequest_For.For(tool, toolType);
+            builder.AppendLine("\n\n" + stat.Worker.GetExplanationFull(statReq, stat.toStringNumberSense, value));
             return builder.ToString();
         }
         /*public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value)
             => new StatDrawEntry(StatCategoryDefOf.Tools, StatDefOf.ToolEffectivenessFactor, value, StatRequest_For.For(tool, toolType));*/
-        public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value)
-            => new StatDrawEntry(StatCategoryDefOf.Tools, toolType.LabelCap, value.ToStringPercent("F0"), ToolStatDrawEntry(tool, toolType, value), 99999,
-                overrideReportTitle: "[[LC]ToolsFramework] ToolStatDrawEntry", hyperlinks: null, forceUnfinalizedMode: false);
+        public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value, ThingDef stuffDef = null)
+            => new StatDrawEntry(StatCategoryDefOf.Tools, toolType.LabelCap, value.ToStringPercent("F0"), ToolStatDrawEntry(tool, toolType, value, stuffDef), 99999,
+                overrideReportTitle: toolType.description, hyperlinks: null, forceUnfinalizedMode: false);
 
     }
 }

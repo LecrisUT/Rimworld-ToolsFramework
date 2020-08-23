@@ -9,6 +9,7 @@ namespace ToolsFramework
     public class ToolType : Def
     {
         public static Dictionary<JobDef, ToolType> jobToolType = new Dictionary<JobDef, ToolType>();
+        public static List<ToolType> allToolTypes => DefDatabase<ToolType>.AllDefs.ToList();
 
         public List<StatModifier> efficiencyModifiers = new List<StatModifier>();
         public List<StatModifier> workStatFactors = new List<StatModifier>();
@@ -33,6 +34,16 @@ namespace ToolsFramework
                 jobList = DefDatabase<JobDef>.AllDefs.Where(t => (jobException.NullOrEmpty() || !jobException.Contains(t)) && jobDriverList.Any(tt => tt.IsAssignableFrom(t.driverClass))).ToList();
                 return;
             }
+        }
+        public float GetStuffEfficiency(ThingDef stuffDef)
+        {
+            if (stuffDef == null)
+                return 1f;
+            float val = 0f;
+            var statFactors = stuffDef.stuffProps.statFactors;
+            foreach (var mod in efficiencyModifiers)
+                val += mod.value * statFactors.GetStatFactorFromList(mod.stat);
+            return val;
         }
     }
 }

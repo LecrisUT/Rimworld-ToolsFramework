@@ -10,13 +10,6 @@
         <HelperType>ToolsFramework.AutoPatcher.ToilPatch</HelperType>
     </AutoPatcher.AP_ToilPatch>
 
-    <AutoPatcher.HarmonyToil>
-        <defName>ToolsFramework_ToilInsert</defName>
-        <PatcherType>ToolsFramework.AutoPatcher.ToilInsert</PatcherType>
-        <PrepareMethodName>Prepare</PrepareMethodName>
-        <PostfixName>Postfix</PostfixName>
-    </AutoPatcher.HarmonyToil>
-
     <ToolsFramework.AutoPatcher.WorkGiver_EndNode>
         <defName>ToolsFramework_WorkGiver_EndNode</defName>
     </ToolsFramework.AutoPatcher.WorkGiver_EndNode>

@@ -29,7 +29,6 @@ namespace ToolsFramework
         public static bool opportunisticTakeTool = true;
         public static bool opportunisticTakeTool_calcPath = true;
 
-
         public void DoWindowContents(Rect wrect)
         {
             Listing_Standard options = new Listing_Standard();
@@ -41,7 +40,6 @@ namespace ToolsFramework
             Text.Anchor = TextAnchor.UpperLeft;
             int days;
             float hours;
-            int tickUnits = 250;
             options.Gap();
             options.CheckboxLabeled("TF_degredation".Translate(), ref degradation, "TF_degredation_tooltip".Translate());
             if (degradation)
@@ -59,7 +57,7 @@ namespace ToolsFramework
                     options.Label("TF_alertToolNeedsReplacing_Delay".Translate() + $"\t{days} " + "DaysLower".Translate() +
                         $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
                         tooltip: "TF_alertToolNeedsReplacing_Delay_tooltip".Translate());
-                    alertToolNeedsReplacing_Delay = Mathf.RoundToInt(options.Slider((float)alertToolNeedsReplacing_Delay / tickUnits, 1, 100f) * tickUnits);
+                    alertToolNeedsReplacing_Delay = Mathf.RoundToInt(options.Slider(alertToolNeedsReplacing_Delay, 1, GenDate.TicksPerDay));
                     options.Gap();
                     days = Mathf.FloorToInt(alertToolNeedsReplacing_Treshold);
                     hours = alertToolNeedsReplacing_Treshold % 1f * 24f;
@@ -90,19 +88,19 @@ namespace ToolsFramework
             if (optimization)
             {
                 options.Gap();
-                days = Mathf.FloorToInt((float)optimizationDelay * 250 / GenDate.TicksPerDay);
-                hours = ((float)optimizationDelay * 250 - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
+                days = Mathf.FloorToInt((float)optimizationDelay / GenDate.TicksPerDay);
+                hours = ((float)optimizationDelay - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
                 options.Label("TF_optimizationDelay".Translate() + $"\t{days} " + "DaysLower".Translate() + 
                     $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
                     tooltip: "TF_optimizationDelay_tooltip".Translate());
-                optimizationDelay = Mathf.RoundToInt(options.Slider(optimizationDelay, 1, 200));
+                optimizationDelay = Mathf.RoundToInt(options.Slider(optimizationDelay, GenDate.TicksPerHour, GenDate.TicksPerYear));
                 options.Gap();
                 days = Mathf.FloorToInt((float)mapTrackerDelay / GenDate.TicksPerDay);
                 hours = ((float)mapTrackerDelay - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
                 options.Label("TF_mapTrackerDelay".Translate() + $"\t{days} " + "DaysLower".Translate() +
                     $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
                     tooltip: "TF_mapTrackerDelay_tooltip".Translate());
-                mapTrackerDelay = Mathf.RoundToInt(options.Slider((float)mapTrackerDelay / tickUnits, 1, 200f) * tickUnits);
+                mapTrackerDelay = Mathf.RoundToInt(options.Slider(mapTrackerDelay, GenDate.TicksPerHour, GenDate.TicksPerYear));
             }
             options.Gap();
             options.CheckboxLabeled("TF_opportunisticToolJobs".Translate(), ref opportunisticToolJobs, "TF_opportunisticToolJobs_tooltip".Translate());
@@ -133,7 +131,7 @@ namespace ToolsFramework
             Mod.GetSettings<Settings>().Write();
         }
         #region Curves
-        public static float ToolTotalScorePow = 1f;
+        public static float ToolTotalScorePow = 0.5f;
         public static readonly SimpleCurve LifespanScoreCurve = new SimpleCurve
         {
             new CurvePoint(0f, 0.04f),
