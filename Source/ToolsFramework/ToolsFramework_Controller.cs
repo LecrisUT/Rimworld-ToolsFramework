@@ -4,6 +4,7 @@ using System.Linq;
 using Verse;
 using HarmonyLib;
 using ToolsFramework.Harmony;
+using Verse.AI;
 
 namespace ToolsFramework
 {
@@ -27,6 +28,9 @@ namespace ToolsFramework
                 HarmonyLib.Harmony.ReversePatch(TryGetOffHand, new HarmonyMethod(myTryGetOffHand), null);
                 HarmonyLib.Harmony.ReversePatch(AddOffHand, new HarmonyMethod(myAddOffHand), null);
             }
+            if (ModsConfig.IsActive("petetimessix.simplesidearms"))
+                harmony.Unpatch(AccessTools.Constructor(typeof(Toil)), HarmonyPatchType.Postfix, "PeteTimesSix.SimpleSidearms");
+            ToolsFramework.thisMod.GetSettings<Settings>();
         }
     }
 }

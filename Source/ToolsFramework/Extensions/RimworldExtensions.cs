@@ -93,9 +93,9 @@ namespace ToolsFramework
         }
         public static bool HasDamagedTools(this Pawn pawn)
         {
-            if (!pawn.CanUseTools(out var tracker))
+            if (pawn == null || !pawn.CanUseTools(out var tracker))
                 return false;
-            if (tracker.usedHandler.UsedTools.Any(t => t.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold))
+            if (tracker.usedHandler.UsedTools?.Any(t => t.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold) ?? false)
                 return true;
             return false;
         }

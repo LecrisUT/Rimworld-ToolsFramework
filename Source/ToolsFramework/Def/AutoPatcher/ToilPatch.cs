@@ -123,22 +123,6 @@ namespace ToolsFramework.AutoPatcher
             }
             return newToil;
         }
-        public static bool ReadyTool(Pawn pawn, Job job, TargetIndex targetInd, out Toil toil)
-        {
-            toil = null;
-            bool newToil = false;
-            if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(job.def, out var toolType))
-                return false;
-            var tool = tracker.usedHandler.BestTool[toolType];
-            if (tool == null)
-                return false;
-            if (Settings.equipDelay)
-            {
-                toil = Toils_General.WaitWith(TargetIndex.A, Mathf.CeilToInt(tool.GetStatValueForPawn(StatDefOf.ToolReadinessDelay, pawn)), true, true);
-                newToil = true;
-            }
-            return newToil;
-        }
 
         public static void ChangeToil(ref Toil toil, JobDriver driver)
         {

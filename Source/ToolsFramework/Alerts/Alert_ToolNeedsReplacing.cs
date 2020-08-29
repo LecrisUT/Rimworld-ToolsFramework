@@ -11,7 +11,6 @@ namespace ToolsFramework
         public Alert_ToolNeedsReplacing()
         {
             defaultPriority = AlertPriority.Medium;
-            nextAlertTick = Find.TickManager.TicksGame;
         }
         private List<Pawn> culpritsResult = new List<Pawn>();
 

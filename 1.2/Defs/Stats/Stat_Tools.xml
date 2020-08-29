@@ -59,6 +59,9 @@
         <defaultBaseValue>1</defaultBaseValue>
         <minValue>0.5</minValue>
         <toStringStyle>PercentZero</toStringStyle>
+        <parts>
+            <li Class="ToolsFramework.StatPart_Settings"/>
+        </parts>
     </StatDef>
 
     <StatDef>
@@ -73,5 +76,8 @@
         <formatString>{0} s</formatString>
         <showOnPawns>false</showOnPawns>
         <displayPriorityInCategory>50</displayPriorityInCategory>
+        <parts>
+            <li Class="ToolsFramework.StatPart_Settings"/>
+        </parts>
     </StatDef>
 </Defs>

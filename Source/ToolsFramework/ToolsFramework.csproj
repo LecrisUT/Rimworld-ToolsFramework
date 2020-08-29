@@ -99,6 +99,7 @@
     <Compile Include="Harmony\StatRequest.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Comps\ToolUse.cs" />
+    <Compile Include="Stats\StatPart_Settings.cs" />
     <Compile Include="Stats\StatPart_StuffEffect.cs" />
     <Compile Include="Stats\StatWorker_ToolEffectivenessFactor.cs" />
     <Compile Include="Stats\StatWorker_ToolReadinessDelay.cs" />

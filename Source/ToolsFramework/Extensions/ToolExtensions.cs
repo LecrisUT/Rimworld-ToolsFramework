@@ -104,6 +104,14 @@ namespace ToolsFramework
             val *= toolType.workStatFactors.GetStatFactorFromList(stat);
             return true;
         }
+        public static bool TryGetValue(this Tool tool, ToolType toolType, StatDef stat, out float val)
+        {
+            val = 0f;
+            if (tool == null || !tool.TryGetValue(toolType, out val))
+                return false;
+            val *= toolType.workStatFactors.GetStatFactorFromList(stat);
+            return true;
+        }
         public static float GetValue(this Tool tool, ToolType toolType, float fallback = 0f)
         {
             if (tool.TryGetValue(toolType, out float val))
@@ -119,6 +127,12 @@ namespace ToolsFramework
         public static float GetValue(this Tool tool, JobDef job, StatDef stat, float fallback = 0f)
         {
             if (tool.TryGetValue(job, stat, out float val))
+                return val;
+            return fallback;
+        }
+        public static float GetValue(this Tool tool, ToolType toolType, StatDef stat, float fallback = 0f)
+        {
+            if (tool.TryGetValue(toolType, stat, out float val))
                 return val;
             return fallback;
         }

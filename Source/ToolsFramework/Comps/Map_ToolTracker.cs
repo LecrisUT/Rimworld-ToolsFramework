@@ -13,7 +13,7 @@ namespace ToolsFramework
         {
             nextOptimizationTick = Find.TickManager.TicksGame;
         }
-        public bool dirtyCache = false;
+        public bool dirtyCache = true;
         private List<Tool> storedTools = new List<Tool>();
         public IEnumerable<Tool> StoredTools => storedTools;
         public List<Tool> StoredToolsList
@@ -82,24 +82,20 @@ namespace ToolsFramework
         public void FindBestTools()
         {
             bestToolThings = Utility.AllToolDefs.ToDictionary<ThingDef, ThingDef, Tool>(t => t, t => null);
-            bestTools = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
             foreach (var toolType in DefDatabase<ToolType>.AllDefs)
                 FindBestTool(toolType);
             foreach (var tool in storedTools)
             {
                 var toolDef = tool.def;
-                if (!bestToolThings.TryGetValue(toolDef, out var currTool) || tool.TotalScore > currTool.TotalScore)
-                    bestToolThings.SetOrAdd(toolDef, tool);
+                if (tool.TotalScore > (bestToolThings[toolDef]?.TotalScore ?? 0f))
+                    bestToolThings[toolDef] = tool;
             }
             dirtyCache = false;
         }
         public void FindBestTool(ToolType toolType)
         {
             var tool = BestTool(toolType);
-            if (tool != null)
-                bestTools.SetOrAdd(toolType, tool);
-            else if (bestTools.ContainsKey(toolType))
-                bestTools.Remove(toolType);
+            bestTools[toolType] = tool;
         }
         public Tool BestTool(ToolType toolType)
         {

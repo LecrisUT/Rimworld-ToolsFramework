@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Verse;
 
 namespace ToolsFramework.AutoPatcher
@@ -19,6 +20,7 @@ namespace ToolsFramework.AutoPatcher
             var statListIndexed = InputA(node.inputPorts).GetData<List<(int pos, StatDef stat)>>().ToList();
             var statJobDef = new Dictionary<StatDef, List<JobDef>>();
             var statList = statListIndexed.SelectMany(t => t.Select(tt => tt.stat)).ToList();
+            var duplicateToolType = new Dictionary<JobDef, List<ToolType>>();
             statList.RemoveDuplicates();
             statList.Do(t => statJobDef.Add(t, new List<JobDef>()));
             for (int i = 0; i < typeMethods.Count; i++)
@@ -42,8 +44,42 @@ namespace ToolsFramework.AutoPatcher
                             jobList.AddRange(jobs);
                     jobList.RemoveDuplicates();
                     foreach (var job in jobList.Where(t => !toolType.jobException.Contains(t)))
-                        ToolType.jobToolType.Add(job, toolType);
+                    {
+                        if (ToolType.jobToolType.ContainsKey(job))
+                        {
+                            if (duplicateToolType.TryGetValue(job, out var list))
+                            {
+                                list.Add(toolType);
+                            }
+                            else
+                                duplicateToolType.Add(job, new List<ToolType>
+                                {
+                                    ToolType.jobToolType[job],
+                                    toolType,
+                                });
+                        }
+                        else
+                            ToolType.jobToolType.Add(job, toolType);
+                    }
                 }
+            }
+            if (!duplicateToolType.EnumerableNullOrEmpty())
+            {
+                duplicateToolType.Keys.Do(t => ToolType.jobToolType.Remove(t));
+                if (node.DebugLevel > -1)
+                {
+                    var warn = new StringBuilder("TF_BaseMessage".Translate() + ": Following jobs are ignored due to duplicate ToolTypes assigned:\n");
+                    foreach (var item in duplicateToolType)
+                    {
+                        warn.Append($"{item.Key} : ");
+                        foreach (var toolType in item.Value)
+                            warn.Append($"{toolType}, ");
+                        warn.Length -= 2;
+                        warn.AppendLine();
+                    }
+                    Log.Warning(warn.ToString());
+                }
+
             }
             if (node.DebugLevel > 0)
             {

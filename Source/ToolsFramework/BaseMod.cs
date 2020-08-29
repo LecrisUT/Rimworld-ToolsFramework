@@ -5,11 +5,12 @@ namespace ToolsFramework
 {
     public class ToolsFramework : Mod
     {
+        public static ToolsFramework thisMod;
         public Settings settings;
 
         public ToolsFramework(ModContentPack content) : base(content)
         {
-            GetSettings<Settings>();
+            thisMod = this;
         }
 
         public override string SettingsCategory() => "ToolsFramework".Translate();

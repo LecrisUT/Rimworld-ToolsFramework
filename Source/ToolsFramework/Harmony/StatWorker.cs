@@ -34,12 +34,23 @@ namespace ToolsFramework.Harmony
         }
         private static void ReportText(ref StringBuilder stringBuilder, Pawn pawn, StatDef stat, Tool tool, ToolType toolType, float origVal)
         {
-            var toolVal = tool.GetStatValue(toolType, stat, fallback: 1f);
-            stringBuilder.Append("  " + toolType.LabelCap + " : x" + toolVal + " = " + origVal * toolVal);
+            var toolVal = tool.GetValue(toolType, stat, 1f);
+            stringBuilder.Append("  " + toolType.LabelCap + " : x" + toolVal + " = " + (origVal * toolVal).ToStringPercent());
             if (tool == null)
                 stringBuilder.AppendLine(" [" + "NoTool".Translate() + "]");
             else
+            {
                 stringBuilder.AppendLine(" [" + tool.LabelCap + "]");
+                var jobBonus = tool.ToolProperties.jobBonus;
+                if (jobBonus.NullOrEmpty())
+                    stringBuilder.AppendLine("  [" + "NoJobBonus".Translate() + "]");
+                else
+                {
+                    stringBuilder.AppendLine("  " + "JobBonus".Translate() + ":");
+                    foreach (var bonus in jobBonus)
+                        stringBuilder.AppendLine("    " + bonus.job + ": x" + bonus.value);
+                }
+            }
         }
     }
 }

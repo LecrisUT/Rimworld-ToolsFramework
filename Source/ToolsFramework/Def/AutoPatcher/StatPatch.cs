@@ -74,6 +74,8 @@ namespace ToolsFramework.AutoPatcher
         public static float GetStatValueJob(this Pawn pawn, StatDef stat, Job job, bool applyPostProcess = true)
         {
             var val = pawn.GetStatValue(stat, applyPostProcess);
+            if (!ToolType.jobToolType.ContainsKey(job.def))
+                return val;
             if (pawn.CanUseTools(out var tracker) && tracker.toolInUse is Tool tool)
                 return val * tool.GetValue(job.def, stat);
             return GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess);

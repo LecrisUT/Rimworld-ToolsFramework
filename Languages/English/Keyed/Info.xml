@@ -6,4 +6,8 @@
     <AsTool>as a tool</AsTool>
     <NoTool>no tool</NoTool>
     <ToolEffect>tool effect</ToolEffect>
+    <JobBonus>Job bonuses</JobBonus>
+    <NoJobBonus>No job bonuses</NoJobBonus>
+    <Settings>Settings</Settings>
+    <TF_LoadoutToolReadiness>Loadout effect</TF_LoadoutToolReadiness>
 </LanguageData>

@@ -11,9 +11,9 @@ namespace ToolsFramework.AutoPatcher
 {
     public class WorkGiver_EndNode : EndNode<(Type type, Type ntype, MethodInfo method), List<(int pos, JobDef job)>>
     {
-        public override void Initialize()
+        public override void Initialize(bool fromSave = false)
         {
-            base.Initialize();
+            base.Initialize(fromSave);
             foreach (var wgDef in DefDatabase<WorkGiverDef>.AllDefs.Where(t => t.HasModExtension<WorkGiver_Extension>()))
                 Utility.toolWorkGivers.Add(wgDef, wgDef.GetModExtension<WorkGiver_Extension>().toolTypes);
         }

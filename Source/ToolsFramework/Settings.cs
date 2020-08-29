@@ -141,12 +141,21 @@ namespace ToolsFramework
             new CurvePoint(4f, 1f),
             new CurvePoint(999f, 10f)
         };
+        public static readonly SimpleCurve ToolReadinessCurve = new SimpleCurve
+        {
+            new CurvePoint(0f, 0.00f),
+            new CurvePoint(1f, 1f),
+            new CurvePoint(2f, 2f),
+            new CurvePoint(4f, 4f),
+            new CurvePoint(999f, 10f)
+        };
         #endregion
 
         public override void ExposeData()
         {
             Scribe_Values.Look(ref degradation, "degradation", true);
             Scribe_Values.Look(ref degradationFactor, "degradationFactor", 1f);
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolWearFactor, degradationFactor);
 
             Scribe_Values.Look(ref alertToolNeedsReplacing, "alertToolNeedsReplacing", true);
             Scribe_Values.Look(ref alertToolNeedsReplacing_Delay, "alertToolNeedsReplacing_Delay", 1);
@@ -157,6 +166,7 @@ namespace ToolsFramework
 
             Scribe_Values.Look(ref equipDelay, "equipDelay", true);
             Scribe_Values.Look(ref equipDelayFactor, "equipDelayFactor", 1f);
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolReadinessDelay, equipDelayFactor);
 
             Scribe_Values.Look(ref optimization, "optimization", true);
             Scribe_Values.Look(ref optimizationDelay, "optimizationDelay", 1);
