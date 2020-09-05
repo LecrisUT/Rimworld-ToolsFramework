@@ -10,16 +10,16 @@ using Verse;
 
 namespace ToolsFramework.AutoPatcher
 {
-    public class JobDef_EndNode : EndNode<(Type type, Type ntype, MethodInfo method), List<(int pos, StatDef stat)>>
+    public class JobDef_EndNode : EndNode<TypeMethod, SavedList<ItemPos<StatDef>>>
     {
         public override bool Perform(Node node)
         {
             if (!base.Perform(node))
                 return false;
-            var typeMethods = BaseInput(node.inputPorts).GetData<(Type type, Type ntype, MethodInfo method)>().ToList();
-            var statListIndexed = InputA(node.inputPorts).GetData<List<(int pos, StatDef stat)>>().ToList();
+            var typeMethods = BaseInput(node.inputPorts).GetData<TypeMethod>().ToList();
+            var statListIndexed = InputA(node.inputPorts).GetData<List<ItemPos<StatDef>>>().ToList();
             var statJobDef = new Dictionary<StatDef, List<JobDef>>();
-            var statList = statListIndexed.SelectMany(t => t.Select(tt => tt.stat)).ToList();
+            var statList = statListIndexed.SelectMany(t => t.Select(tt => tt.target)).ToList();
             var duplicateToolType = new Dictionary<JobDef, List<ToolType>>();
             statList.RemoveDuplicates();
             statList.Do(t => statJobDef.Add(t, new List<JobDef>()));
@@ -27,7 +27,7 @@ namespace ToolsFramework.AutoPatcher
             {
                 var jobDriver = typeMethods[i].type;
                 var jobList = DefDatabase<JobDef>.AllDefs.Where(t => jobDriver.IsAssignableFrom(t.driverClass));
-                foreach (var stat in statListIndexed[i].Select(t => t.stat))
+                foreach (var stat in statListIndexed[i].Select(t => t.target))
                     statJobDef[stat].AddRange(jobList);
             }
             statJobDef.Do(t => t.Value.RemoveDuplicates());

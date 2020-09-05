@@ -1,10 +1,8 @@
-﻿using HarmonyLib;
-using System.Reflection;
-using Verse;
+﻿using Verse;
 
 namespace ToolsFramework.Harmony
 {
-    [HarmonyPatch]
+    //[HarmonyPatch]
     public static class Patch_DualWield_Ext_Pawn_EquipmentTracker
     {
         public static void AddOffHandEquipment(this Pawn_EquipmentTracker instance, ThingWithComps newEq)

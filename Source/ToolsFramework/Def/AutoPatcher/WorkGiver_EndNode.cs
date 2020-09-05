@@ -1,15 +1,13 @@
 ﻿using AutoPatcher;
 using HarmonyLib;
 using RimWorld;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Verse;
 
 namespace ToolsFramework.AutoPatcher
 {
-    public class WorkGiver_EndNode : EndNode<(Type type, Type ntype, MethodInfo method), List<(int pos, JobDef job)>>
+    public class WorkGiver_EndNode : EndNode<TypeMethod, SavedList<ItemPos<JobDef>>>
     {
         public override void Initialize(bool fromSave = false)
         {
@@ -21,8 +19,8 @@ namespace ToolsFramework.AutoPatcher
         {
             if (!base.Perform(node))
                 return false;
-            var workGivers = BaseInput(node.inputPorts).GetData<(Type type, Type ntype, MethodInfo method)>().Select(t => t.type).ToList();
-            var jobDefs = InputA(node.inputPorts).GetData<List<(int pos, JobDef job)>>().Select(t => t.ConvertAll(tt => tt.job)).ToList();
+            var workGivers = BaseInput(node.inputPorts).GetData<TypeMethod>().Select(t => t.type).ToList();
+            var jobDefs = InputA(node.inputPorts).GetData<List<ItemPos<JobDef>>>().Select(t => t.ConvertAll(tt => tt.target)).ToList();
             for (int i = 0; i < workGivers.Count; i++)
             {
                 var wg = workGivers[i];

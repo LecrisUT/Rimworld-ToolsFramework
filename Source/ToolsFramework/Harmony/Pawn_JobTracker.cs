@@ -107,6 +107,7 @@ namespace ToolsFramework.Harmony
                 {
                     toolJob = pawn.TakeTool(tool);
                     TransformJob(ref toolJob);
+                    pawn.MapHeld.reservationManager.Reserve(pawn, toolJob, tool);
                     return true;
                 }
             }

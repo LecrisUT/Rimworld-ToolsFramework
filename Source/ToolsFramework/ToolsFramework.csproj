@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\1.2\Assemblies\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -84,12 +84,14 @@
     <Compile Include="Def\ToolType.cs" />
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
-    <Compile Include="Harmony\JobGiver_AwesomeInventory_TakeArm.cs" />
+    <Compile Include="Harmony\AwesomeInventory_JobGiver_AwesomeInventory_TakeArm.cs" />
+    <Compile Include="Harmony\WorkTab_FavouriteManager.cs" />
+    <Compile Include="Harmony\WorkTab_PriorityTracker.cs" />
     <Compile Include="Harmony\StatWorker.cs" />
     <Compile Include="Harmony\ThingDef.cs" />
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
-    <Compile Include="Harmony\DualWield_Ext_Pawn_EquipmentTracker.cs" />
+    <Compile Include="Harmony\DualWield_DualWield_Ext_Pawn_EquipmentTracker.cs" />
     <Compile Include="Harmony\ForbidUtility.cs" />
     <Compile Include="Harmony\Pawn_WorkSettings.cs" />
     <Compile Include="Harmony\PawnRenderer.cs" />

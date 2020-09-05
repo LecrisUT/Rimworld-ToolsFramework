@@ -114,11 +114,13 @@ namespace ToolsFramework
         }
         public Tool ClosestTool(ToolType toolType, IntVec3 pos, Pawn pawn = null)
         {
+            var reservation = pawn?.MapHeld.reservationManager;
+            var faction = pawn?.Faction;
             Tool tool = null;
             float bestDist = float.MaxValue;
             foreach (var currTool in StoredTools)
             {
-                if (currTool.IsForbidden(pawn) || !currTool.TryGetValue(toolType, out float val) || val < 1f || !Distance(currTool, pos, out float dist))
+                if (currTool.IsForbidden(pawn) || (reservation?.IsReservedByAnyoneOf(currTool, faction) ?? false) || !currTool.TryGetValue(toolType, out float val) || val < 1f || !Distance(currTool, pos, out float dist))
                     continue;
                 if (dist < bestDist)
                 {

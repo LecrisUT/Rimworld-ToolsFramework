@@ -39,20 +39,22 @@ namespace ToolsFramework
             var bestMapToolThings = mapTracker.BestToolThings;
             var mapToolThings = mapTracker.StoredToolThings;
             var reservation = pawn.MapHeld.reservationManager;
+            var faction = pawn.Faction;
             var assignmentFilter = tracker.ToolAssignment.filter;
             foreach (var toolType in neededToolTypes)
             {
                 var mapTool = mapTools[toolType];
                 if (mapTool == null)
                     continue;
-                if (mapTool.IsForbidden(pawn))
+                if (mapTool.IsForbidden(pawn) || reservation.IsReservedByAnyoneOf(mapTool, faction))
                 {
+                    mapTool = null;
                     foreach (var thingDef in bestMapToolThings.Keys)
                     {
                         var tool = bestMapToolThings[thingDef];
                         if (tool == null)
                             continue;
-                        if (assignmentFilter.Allows(thingDef) && thingDef.IsTool(out var prop) && prop.ToolTypes.Contains(toolType))
+                        if (assignmentFilter.Allows(thingDef) && !reservation.IsReservedByAnyoneOf(tool, faction) && thingDef.IsTool(out var prop) && prop.ToolTypes.Contains(toolType))
                         {
                             if (!tool.IsForbidden(pawn))
                                 mapTool = tool;
