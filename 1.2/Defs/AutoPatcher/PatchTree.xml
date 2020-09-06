@@ -2,97 +2,97 @@
 <Defs>
     <AutoPatcher.PatchTreeDef>
         <defName>ToolsFramework_PatchTree</defName>
-        <DebugLevel>4</DebugLevel>
+        <DebugLevel>0</DebugLevel>
         <Nodes>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_JobDriver</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>JobDrivers</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_StatDef_WorkSpeed</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StatDefsSpeed</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_StatDef_WorkYield</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StatDefsYield</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_StatDef_WorkSuccess</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StatDefsSuccess</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_StatSearch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StatSearch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>ToolsFramework_StatPatch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StatPatch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_ActionSearch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>ActionSearch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_ToilSearch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>ToilSearch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>ToolsFramework_ToilPatch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>ToilPatch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_WorkGiver</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>WorkGivers</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_JobDriverInDefOut</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>JobDriverToDef</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_JobSearch</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>JobSearch</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_WorkGiverInDefOut</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>WorkGiverToDef</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>ToolsFramework_WorkGiver_EndNode</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>WorkGiver_EndNode</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>ToolsFramework_JobDef_EndNode</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>JobDef_EndNode</name>
             </li>
             <!-- Inject stats -->
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_BeginNode_ThingDef</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>BeginThingDef</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>ToolsFramework_BeginFormula</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>BeginFormula</name>
             </li>
             <li Class="AutoPatcher.Node">
                 <nodeDef>AP_StuffStatInject</nodeDef>
-                <DebugLevel>4</DebugLevel>
+                <DebugLevel>0</DebugLevel>
                 <name>StuffStatInject</name>
             </li>
         </Nodes>
