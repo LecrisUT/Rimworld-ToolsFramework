@@ -73,7 +73,7 @@ namespace ToolsFramework.AutoPatcher
         {
             int offset = 0;
             CIOffsets = new List<(int pos, int offset)>();
-            newItems = null;
+            newItems = new List<(Label, int, int)>();
             // insert Toil
             int toilpos = 0;
             int prevToilPos = pos;
@@ -96,7 +96,7 @@ namespace ToolsFramework.AutoPatcher
                 instuctionList.InsertRange(prevToilPos, insertToil);
                 offset = insertToil.Count;
                 CIOffsets.Add((prevToilPos, offset));
-                newItems = new List<(Label, int, int)> { (label, prevToilPos, insertToil.Count) };
+                newItems.Add((label, prevToilPos, insertToil.Count));
             }
             // patch Toil
             instuctionList.InsertRange(pos + 1 + offset, InsertedInstructions);
