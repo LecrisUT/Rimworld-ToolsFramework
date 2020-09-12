@@ -10,10 +10,10 @@ using Verse.AI;
 namespace ToolsFramework.Harmony
 {
     [HarmonyPatch]
-    public static class Patch_Alert_HunterLacksRangedWeapon
+    public static class Alert_HunterLacksRangedWeapon
     {
         public static MethodBase TargetMethod()
-            => AccessTools.PropertyGetter(typeof(Alert_HunterLacksRangedWeapon), "HuntersWithoutRangedWeapon");
+            => AccessTools.PropertyGetter(typeof(RimWorld.Alert_HunterLacksRangedWeapon), "HuntersWithoutRangedWeapon");
         public static void Postfix(ref List<Pawn> __result)
         {
             __result.RemoveAll(t => t.CanUseTools(out var tracker) && tracker.toolInUse != null);
