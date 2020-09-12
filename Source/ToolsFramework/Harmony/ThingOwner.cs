@@ -16,7 +16,7 @@ namespace ToolsFramework.Harmony
             Pawn pawn = GetPawn(__instance.Owner);
             if (pawn != null && pawn.CanUseTools(out var tracker) && !tracker.transfering)
             {
-                tracker.usedHandler.HeldToolsList.AddDistinct(tool);
+                tracker.UsedHandler.HeldToolsList.AddDistinct(tool);
                 if (pawn.CurJobDef.IsTakingTempTool())
                     tracker.memoryTool.Add(tool);
             }
@@ -30,9 +30,11 @@ namespace ToolsFramework.Harmony
             Pawn pawn = GetPawn(__instance.Owner);
             if (pawn != null && pawn.CanUseTools(out var tracker) == true)
             {
-                tracker.usedHandler.HeldToolsList.Remove(tool);
+                tracker.UsedHandler.HeldToolsList.Remove(tool);
                 if (pawn.CurJobDef.IsReturningTool())
                     tracker.memoryTool.Remove(tool);
+                if (pawn.CurJobDef != null && ToolType.jobToolType.ContainsKey(pawn.CurJobDef))
+                    pawn.jobs.EndCurrentJob(Verse.AI.JobCondition.InterruptOptional);
             }
         }
         [HarmonyPrefix]
@@ -62,7 +64,7 @@ namespace ToolsFramework.Harmony
                 Pawn otherPawn = GetPawn(otherContainer.Owner);
                 if (pawn != otherPawn)
                 {
-                    __state.usedHandler.HeldToolsList.Remove(tool);
+                    __state.UsedHandler.HeldToolsList.Remove(tool);
                     if (pawn.CurJobDef.IsReturningTool())
                         __state.memoryTool.Remove(tool);
                 }

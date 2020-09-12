@@ -113,7 +113,7 @@ namespace ToolsFramework.AutoPatcher
             bool newToil = false;
             if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(job.def, out var toolType))
                 return false;
-            var tool = tracker.usedHandler.BestTool[toolType];
+            var tool = tracker.UsedHandler.BestTool[toolType];
             if (tool == null)
                 return false;
             if (Settings.equipDelay)
@@ -135,7 +135,7 @@ namespace ToolsFramework.AutoPatcher
             if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType))
                 return;
 
-            var tool = tracker.usedHandler.BestTool[toolType];
+            var tool = tracker.UsedHandler.BestTool[toolType];
             if (tool != null)
                 HasTool(ref toil, pawn, tool, tracker);
             else
@@ -163,6 +163,10 @@ namespace ToolsFramework.AutoPatcher
                 tracker.toolInUse = null;
                 tracker.memoryEquipment = null;
                 tracker.memoryEquipmentOffHand = null;
+            });
+            toil.AddFailCondition(delegate
+            {
+                return tool.DestroyedOrNull();
             });
         }
         public static List<JobDef> dropJobs = new List<JobDef>()

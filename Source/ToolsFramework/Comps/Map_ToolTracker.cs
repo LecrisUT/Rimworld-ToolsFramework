@@ -133,22 +133,28 @@ namespace ToolsFramework
         private static bool Distance(Thing target, IntVec3 source, out float dist)
         {
             dist = float.MaxValue;
+            var pathFinder = target?.MapHeld?.pathFinder;
+            if (pathFinder == null)
+                return false;
             if (Settings.opportunisticTakeTool_calcPath)
             {
-                var path = target.Map.pathFinder.FindPath(source, target, TraverseParms.For(TraverseMode.PassDoors, Danger.Some), PathEndMode.Touch);
+                var path = pathFinder.FindPath(source, target, TraverseParms.For(TraverseMode.PassDoors, Danger.Some), PathEndMode.Touch);
                 bool found = path.Found;
                 if (found)
                     dist = path.TotalCost * 2;
                 path.ReleaseToPool();
                 return found;
             }
-            dist = Mathf.Sqrt(source.DistanceToSquared(target.Position)) * 2;
+            dist = Mathf.Sqrt(source.DistanceToSquared(target.PositionHeld)) * 2;
             return true;
         }
         public override void ExposeData()
         {
             Scribe_Values.Look(ref nextOptimizationTick, "nextOptimizationTick");
             Scribe_Collections.Look(ref storedTools, "storedTools", LookMode.Reference);
+            if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+                storedTools.RemoveAll(t => t.DestroyedOrNull());
+
         }
     }
 }

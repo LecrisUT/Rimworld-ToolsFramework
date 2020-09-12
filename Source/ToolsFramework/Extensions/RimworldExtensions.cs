@@ -34,7 +34,7 @@ namespace ToolsFramework
         }
         public static void EquipTool(this Pawn pawn, Tool tool)
         {
-            if (!pawn.CanUseTools(out var tracker) || !tracker.usedHandler.HeldTools.Contains(tool))
+            if (!pawn.CanUseTools(out var tracker) || !tracker.UsedHandler.HeldTools.Contains(tool))
                 return;
             bool equipTool = true;
             var equipment = pawn.equipment;
@@ -70,7 +70,7 @@ namespace ToolsFramework
             // tracker.transfering = true;
             if (tracker.memoryEquipment != tool && tracker.memoryEquipmentOffHand != tool)
             {
-                if (tracker.usedHandler.HeldTools.Contains(tool))
+                if (tracker.UsedHandler.HeldTools.Contains(tool))
                     equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
                 if (mainEquipment != null && pawn.inventory.Contains(mainEquipment))
                     pawn.inventory.innerContainer.TryTransferToContainer(mainEquipment, equipment.GetDirectlyHeldThings());
@@ -95,7 +95,7 @@ namespace ToolsFramework
         {
             if (pawn == null || !pawn.CanUseTools(out var tracker))
                 return false;
-            if (tracker.usedHandler.UsedTools?.Any(t => t.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold) ?? false)
+            if (tracker.UsedHandler.UsedTools?.Any(t => t.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold) ?? false)
                 return true;
             return false;
         }

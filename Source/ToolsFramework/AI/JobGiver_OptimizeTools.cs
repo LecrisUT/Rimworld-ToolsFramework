@@ -21,8 +21,8 @@ namespace ToolsFramework
                 goto NoJobs;
             // Remove extra Tools
             var jobs = new List<Job>();
-            var heldTools = tracker.usedHandler.HeldTools.ToList();
-            var bestTools = tracker.usedHandler.BestTool;
+            var heldTools = tracker.UsedHandler.HeldTools.ToList();
+            var bestTools = tracker.UsedHandler.BestTool;
             var neededToolTypes = tracker.NecessaryToolTypes;
             var neededTools = new List<Tool>();
             foreach (var toolType in neededToolTypes)

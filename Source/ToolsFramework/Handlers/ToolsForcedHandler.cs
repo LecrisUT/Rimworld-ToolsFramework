@@ -19,6 +19,8 @@ namespace ToolsFramework
         public void ExposeData()
         {
             Scribe_Collections.Look(ref forcedTools, "forcedTools", LookMode.Reference);
+            if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+                forcedTools.RemoveWhere(t => t.DestroyedOrNull());
         }
     }
 }

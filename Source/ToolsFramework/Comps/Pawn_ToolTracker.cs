@@ -35,7 +35,16 @@ namespace ToolsFramework
             set => toolAssignment = value;
         }
 
-        public ToolsUsedHandler usedHandler = new ToolsUsedHandler();
+        private ToolsUsedHandler usedHandler;
+        public ToolsUsedHandler UsedHandler
+        {
+            get
+            {
+                if (usedHandler == null)
+                    usedHandler = new ToolsUsedHandler(Pawn);
+                return usedHandler;
+            }
+        }
         public ToolsForcedHandler forcedHandler = new ToolsForcedHandler();
         public bool dirtyCache_necessaryToolTypes = true;
         private HashSet<ToolType> necessaryToolTypes = new HashSet<ToolType>();
@@ -70,9 +79,15 @@ namespace ToolsFramework
 
             Scribe_References.Look(ref toolAssignment, "toolAssignment");
 
-            Scribe_Deep.Look(ref usedHandler, "usedHandler");
+            // Scribe_Deep.Look(ref usedHandler, "usedHandler");
             Scribe_Deep.Look(ref forcedHandler, "forecedHandler");
-            Scribe_Collections.Look(ref necessaryToolTypes, "necessaryToolTypes", LookMode.Def);
+            if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+            {
+                toolInUse = toolInUse.DestroyedOrNull() ? null : toolInUse;
+                memoryTool.RemoveAll(t => t.DestroyedOrNull());
+                memoryEquipment = memoryEquipment.DestroyedOrNull() ? null : memoryEquipment;
+                memoryEquipmentOffHand = memoryEquipmentOffHand.DestroyedOrNull() ? null : memoryEquipmentOffHand;
+            }
         }
     }
 }

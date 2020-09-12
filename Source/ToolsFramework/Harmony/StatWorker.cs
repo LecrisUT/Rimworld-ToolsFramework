@@ -26,7 +26,7 @@ namespace ToolsFramework.Harmony
                     return;
                 foreach (var toolType in toolTypes)
                 {
-                    var tool = tracker.usedHandler.BestTool[toolType];
+                    var tool = tracker.UsedHandler.BestTool[toolType];
                     ReportText(ref builder, pawn, ___stat, tool, toolType, finalVal);
                 }
                 __result += builder.ToString();

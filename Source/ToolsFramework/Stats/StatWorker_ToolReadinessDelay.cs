@@ -27,7 +27,7 @@ namespace ToolsFramework
         {
             if (tool == null || !(tool.HoldingPawn is Pawn pawn) || !pawn.CanUseTools(out var tracker))
                 return 1f;
-            var count = tracker.usedHandler.HeldToolsCount;
+            var count = tracker.UsedHandler.HeldToolsCount;
             return Settings.ToolReadinessCurve.Evaluate(count);
         }
     }

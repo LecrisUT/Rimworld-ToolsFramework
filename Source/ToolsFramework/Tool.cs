@@ -87,7 +87,7 @@ namespace ToolsFramework
             base.Destroy(mode);
             if (!HoldingPawn.CanUseTools(out var tracker))
                 return;
-            tracker.usedHandler.HeldToolsList.Remove(this);
+            tracker.UsedHandler.HeldToolsList.Remove(this);
             tracker.forcedHandler.ForcedTools.Remove(this);
         }
     }

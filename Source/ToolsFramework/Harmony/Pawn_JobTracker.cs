@@ -99,7 +99,7 @@ namespace ToolsFramework.Harmony
             {
                 if (!toolType.emergencyTool && !jobDef.allowOpportunisticPrefix)
                     return false;
-                if (tracker.usedHandler.BestTool[toolType] != null)
+                if (tracker.UsedHandler.BestTool[toolType] != null)
                     return false;
                 var mapTracker = pawn.MapHeld.GetComponent<Map_ToolTracker>();
                 var tool = mapTracker.ClosestTool(toolType, pawn.PositionHeld, pawn);
