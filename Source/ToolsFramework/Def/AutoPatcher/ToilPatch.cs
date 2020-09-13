@@ -9,7 +9,6 @@ using System.Reflection.Emit;
 using UnityEngine;
 using RimWorld;
 using AutoPatcher;
-using Mono.Posix;
 
 namespace ToolsFramework.AutoPatcher
 {
@@ -19,17 +18,34 @@ namespace ToolsFramework.AutoPatcher
         private static MethodInfo ChangeToil_Method = AccessTools.Method(thisType, "ChangeToil");
         private static MethodInfo TryAddToil_Method = AccessTools.Method(thisType, "TryAddToil");
         private static FieldInfo Current;
-        private static LocalBuilder switchLocal;
         private static FieldInfo switchField;
-        private static LocalVariableInfo JobDriver;
+        private static LocalVariableInfo JobDriver_local;
+        private static FieldInfo JobDriver_field;
         private static List<(Label label, int ToilStart, int ToilEnd)> ToilInfo;
-        private static List<CodeInstruction> InsertedInstructions => new List<CodeInstruction>()
+        private static List<CodeInstruction> InsertedInstructions
         {
-            new CodeInstruction(OpCodes.Ldarg_0, null),
-            new CodeInstruction(OpCodes.Ldflda, Current),
-            new CodeInstruction(OpCodes.Ldloc_S, JobDriver.LocalIndex),
-            new CodeInstruction(OpCodes.Call, ChangeToil_Method),
-        };
+            get
+            {
+                var instructions = new List<CodeInstruction>()
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0, null),
+                    new CodeInstruction(OpCodes.Ldflda, Current),
+                };
+                if (JobDriver_local != null)
+                    instructions.AddRange(new List<CodeInstruction>
+                    {
+                        new CodeInstruction(OpCodes.Ldloc_S, JobDriver_local.LocalIndex),
+                    });
+                else
+                    instructions.AddRange(new List<CodeInstruction>
+                    {
+                        new CodeInstruction(OpCodes.Ldarg_0, null),
+                        new CodeInstruction(OpCodes.Ldfld, JobDriver_field),
+                    });
+                instructions.Add(new CodeInstruction(OpCodes.Call, ChangeToil_Method));
+                return instructions;
+            }
+        }
         private static List<CodeInstruction> InsertToilInstructions(int pos, Label thisLabel, Label nextLabel)
         {
             var instructions = new List<CodeInstruction>()
@@ -37,35 +53,49 @@ namespace ToolsFramework.AutoPatcher
                 new CodeInstruction(OpCodes.Ldarg_0, null) { labels = new List<Label>{ thisLabel } },
                 new CodeInstruction(OpCodes.Ldc_I4, pos + 1),
                 new CodeInstruction(OpCodes.Stfld, switchField),
-                new CodeInstruction(OpCodes.Ldloc_S, JobDriver.LocalIndex),
+            };
+            if (JobDriver_local != null)
+                instructions.AddRange(new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldloc_S, JobDriver_local.LocalIndex),
+                });
+            else
+                instructions.AddRange(new List<CodeInstruction>
+                {
+                    new CodeInstruction(OpCodes.Ldarg_0, null),
+                    new CodeInstruction(OpCodes.Ldfld, JobDriver_field),
+                });
+            instructions.AddRange(new List<CodeInstruction>
+            {
                 new CodeInstruction(OpCodes.Ldarg_0, null),
                 new CodeInstruction(OpCodes.Ldflda, Current),
                 new CodeInstruction(OpCodes.Call, TryAddToil_Method),
                 new CodeInstruction(OpCodes.Brfalse, nextLabel),
                 new CodeInstruction(OpCodes.Ldc_I4_1,null),
                 new CodeInstruction(OpCodes.Ret, null),
-            };
+            });
             return instructions;
         }
         public static bool Prepare(Type type, Type ntype, MethodInfo method, (FieldInfo Current, FieldInfo switchField, LocalVar switchLocal) enumInfo, List<MethodInfo> actions, List<(Label label, int ToilStart, int ToilEnd)> toilInfo)
         {
-            if (!SearchJobDriver(method, type, out JobDriver))
+            if (!SearchJobDriver(method, type, ntype, out JobDriver_local, out JobDriver_field))
                 return false;
             Current = enumInfo.Current;
-            switchLocal = enumInfo.switchLocal;
             switchField = enumInfo.switchField;
             ToilInfo = toilInfo;
             firstToil = true;
             return true;
         }
         private static bool firstToil = false;
-        private static bool SearchJobDriver(MethodInfo searchMethod, Type JobDriver, out LocalVariableInfo JobDriver_local)
+        private static bool SearchJobDriver(MethodInfo searchMethod, Type JobDriver, Type ntype, out LocalVariableInfo JobDriver_local, out FieldInfo JobDriver_field)
         {
-            JobDriver_local = null;
-            var local = searchMethod.GetMethodBody().LocalVariables.FirstOrFallback(t => t.LocalType == JobDriver);
-            if (local == null)
-                return false;
-            JobDriver_local = local;
+            JobDriver_field = null;
+            JobDriver_local = searchMethod.GetMethodBody().LocalVariables.FirstOrFallback(t => t.LocalType == JobDriver);
+            if (JobDriver_local == null)
+            {
+                JobDriver_field = ntype.GetFields(AccessTools.all).First(t => t.FieldType == JobDriver);
+                return JobDriver_field != null;
+            }
             return true;
         }
         public static bool Transpile(ref List<CodeInstruction> instuctionList, ILGenerator generator, int pos, List<MethodInfo> actions,
@@ -132,10 +162,19 @@ namespace ToolsFramework.AutoPatcher
                 Log.Error("TF_BaseMessage".Translate() + "TF_Error_ChangeToil".Translate(toil.Named(null), driver.job.def, driver.Named(null)));
                 return;
             }
+#if DEBUG
+            Log.Message($"Test 3.0: {ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType2)} : {toolType2}");
+#endif
             if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType))
                 return;
 
             var tool = tracker.UsedHandler.BestTool[toolType];
+#if DEBUG
+            var test = new System.Text.StringBuilder($"Test 3.1: {tracker.UsedHandler.BestTool[toolType]}\n");
+            foreach (var a in tracker.UsedHandler.BestTool)
+                test.AppendLine($"{a.Key} : {a.Value}");
+            Log.Message(test.ToString());
+#endif
             if (tool != null)
                 HasTool(ref toil, pawn, tool, tracker);
             else

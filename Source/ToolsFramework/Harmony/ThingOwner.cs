@@ -19,6 +19,15 @@ namespace ToolsFramework.Harmony
                 tracker.UsedHandler.HeldToolsList.AddDistinct(tool);
                 if (pawn.CurJobDef.IsTakingTempTool())
                     tracker.memoryTool.Add(tool);
+#if DEBUG
+                var test = new System.Text.StringBuilder($"Test 1.0: Tool pick-up: {pawn} : {tool}\nHeldTools:\n");
+                foreach (var a in tracker.UsedHandler.HeldTools)
+                    test.AppendLine($"{a}");
+                test.AppendLine($"\nBestTools:");
+                foreach (var b in tracker.UsedHandler.BestTool)
+                    test.AppendLine($"{b.Key} : {b.Value}");
+                Log.Message(test.ToString());
+#endif
             }
         }
         [HarmonyPostfix]
@@ -35,6 +44,15 @@ namespace ToolsFramework.Harmony
                     tracker.memoryTool.Remove(tool);
                 if (pawn.CurJobDef != null && ToolType.jobToolType.ContainsKey(pawn.CurJobDef))
                     pawn.jobs.EndCurrentJob(Verse.AI.JobCondition.InterruptOptional);
+#if DEBUG
+                var test = new System.Text.StringBuilder($"Test 1.1: Tool pick-up: {pawn} : {tool}\nHeldTools:\n");
+                foreach (var a in tracker.UsedHandler.HeldTools)
+                    test.AppendLine($"{a}");
+                test.AppendLine($"\nBestTools:");
+                foreach (var b in tracker.UsedHandler.BestTool)
+                    test.AppendLine($"{b.Key} : {b.Value}");
+                Log.Message(test.ToString());
+#endif
             }
         }
         [HarmonyPrefix]
@@ -68,7 +86,15 @@ namespace ToolsFramework.Harmony
                     if (pawn.CurJobDef.IsReturningTool())
                         __state.memoryTool.Remove(tool);
                 }
-
+#if DEBUG
+                var test = new System.Text.StringBuilder($"Test 1.2: Tool pick-up: {pawn} : {tool}\nHeldTools:\n");
+                foreach (var a in __state.UsedHandler.HeldTools)
+                    test.AppendLine($"{a}");
+                test.AppendLine($"\nBestTools:");
+                foreach (var b in __state.UsedHandler.BestTool)
+                    test.AppendLine($"{b.Key} : {b.Value}");
+                Log.Message(test.ToString());
+#endif
             }
             __state.transfering = false;
         }

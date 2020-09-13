@@ -75,9 +75,23 @@ namespace ToolsFramework.AutoPatcher
         {
             var val = pawn.GetStatValue(stat, applyPostProcess);
             if (!ToolType.jobToolType.ContainsKey(job.def))
+            {
+#if DEBUG
+                Log.Message($"Test 1.0: Not in job list {pawn} : {stat} : {job.def} : {val}");
+#endif
                 return val;
+            }
             if (pawn.CanUseTools(out var tracker) && tracker.toolInUse is Tool tool)
-                return val * tool.GetValue(job.def, stat);
+            {
+                var mod = tool.GetValue(job.def, stat);
+#if DEBUG
+                Log.Message($"Test 1.1: Use tool {pawn} : {tool} : {stat} : {job.def} : {val} * {mod}");
+#endif
+                return val * mod;
+            }
+#if DEBUG
+            Log.Message($"Test 1.2: No tool found {pawn} : {stat} : {job.def} : {GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess)}");
+#endif
             return GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess);
         }
         public static float GetStatValueJob_Fallback(float orig, Pawn pawn, StatDef stat, Job job, bool applyPostProcess)

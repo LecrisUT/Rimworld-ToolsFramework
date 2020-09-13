@@ -3,12 +3,12 @@ using Verse;
 
 namespace ToolsFramework
 {
-    public class ToolsFramework : Mod
+    public class BaseMod : Mod
     {
-        public static ToolsFramework thisMod;
+        public static BaseMod thisMod;
         public Settings settings;
 
-        public ToolsFramework(ModContentPack content) : base(content)
+        public BaseMod(ModContentPack content) : base(content)
         {
             thisMod = this;
         }

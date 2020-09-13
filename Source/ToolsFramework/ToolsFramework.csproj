@@ -100,7 +100,7 @@
     <Compile Include="Harmony\StatWorker.cs" />
     <Compile Include="Harmony\ThingDef.cs" />
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
-    <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
+    <Compile Include="Harmony\Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_DualWield_Ext_Pawn_EquipmentTracker.cs" />
     <Compile Include="Harmony\ForbidUtility.cs" />
     <Compile Include="Harmony\Pawn_WorkSettings.cs" />
