@@ -8,7 +8,7 @@ namespace ToolsFramework.Harmony
     public static class Patch_FavouriteManager
     {
         public static bool Prepare()
-            => ModsConfig.IsActive("fluffy.worktab");
+            => ModsConfig.IsActive("fluffy.worktab") || ModsConfig.IsActive("fluffy.worktab_local") || ModsConfig.IsActive("fluffy.worktab_steam") || ModsConfig.IsActive("fluffy.worktab_copy");
         public static MethodBase TargetMethod()
             => AccessTools.PropertySetter(AccessTools.TypeByName("WorkTab.FavouriteManager"), "Item");
         public static void Postfix(Pawn pawn)

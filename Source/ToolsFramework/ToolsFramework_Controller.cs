@@ -19,7 +19,7 @@ namespace ToolsFramework
                 tDef.comps.Add(new CompProperties(typeof(Pawn_ToolTracker)));
             }
             var harmony = new HarmonyLib.Harmony("ToolsFramework");
-            if (ModsConfig.IsActive("roolo.dualwield"))
+            if (ModsConfig.IsActive("roolo.dualwield") || ModsConfig.IsActive("roolo.dualwield_local") || ModsConfig.IsActive("roolo.dualwield_steam") || ModsConfig.IsActive("roolo.dualwield_copy"))
             {
                 var myAddOffHand = AccessTools.Method(typeof(Patch_DualWield_Ext_Pawn_EquipmentTracker), nameof(Patch_DualWield_Ext_Pawn_EquipmentTracker.AddOffHandEquipment));
                 var myTryGetOffHand = AccessTools.Method(typeof(Patch_DualWield_Ext_Pawn_EquipmentTracker), nameof(Patch_DualWield_Ext_Pawn_EquipmentTracker.TryGetOffHandEquipment));
@@ -28,7 +28,7 @@ namespace ToolsFramework
                 HarmonyLib.Harmony.ReversePatch(TryGetOffHand, new HarmonyMethod(myTryGetOffHand), null);
                 HarmonyLib.Harmony.ReversePatch(AddOffHand, new HarmonyMethod(myAddOffHand), null);
             }
-            if (ModsConfig.IsActive("petetimessix.simplesidearms"))
+            if (ModsConfig.IsActive("petetimessix.simplesidearms") || ModsConfig.IsActive("petetimessix.simplesidearms_local") || ModsConfig.IsActive("petetimessix.simplesidearms_steam") || ModsConfig.IsActive("petetimessix.simplesidearms_copy"))
                 harmony.Unpatch(AccessTools.Constructor(typeof(Toil)), HarmonyPatchType.Postfix, "PeteTimesSix.SimpleSidearms");
             ToolsFramework.thisMod.GetSettings<Settings>();
         }

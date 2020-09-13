@@ -13,7 +13,7 @@ namespace ToolsFramework.Harmony
     public static class Patch_PriorityTracker_InvalidateCache
     {
         public static bool Prepare()
-            => ModsConfig.IsActive("fluffy.worktab");
+            => ModsConfig.IsActive("fluffy.worktab") || ModsConfig.IsActive("fluffy.worktab_local") || ModsConfig.IsActive("fluffy.worktab_steam") || ModsConfig.IsActive("fluffy.worktab_copy");
         public static IEnumerable<MethodBase> TargetMethods()
         {
             yield return AccessTools.Method("WorkTab.PriorityTracker:InvalidateCache", new Type[] { typeof(WorkGiverDef), typeof(bool) });

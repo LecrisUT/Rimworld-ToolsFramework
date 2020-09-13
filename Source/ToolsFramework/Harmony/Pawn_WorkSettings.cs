@@ -9,7 +9,7 @@ namespace ToolsFramework.Harmony
     public static class Patch_Pawn_WorkSettings_CacheWorkGiversInOrder
     {
         public static bool Prepare()
-            => !ModsConfig.IsActive("fluffy.worktab");
+            => !ModsConfig.IsActive("fluffy.worktab") && !ModsConfig.IsActive("fluffy.worktab_local") && !ModsConfig.IsActive("fluffy.worktab_steam") && !ModsConfig.IsActive("fluffy.worktab_copy");
         public static void Postfix(Pawn ___pawn)
         {
             if (___pawn.CanUseTools(out var tracker))
