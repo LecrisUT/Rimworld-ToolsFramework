@@ -155,7 +155,6 @@ namespace ToolsFramework
         {
             Scribe_Values.Look(ref degradation, "degradation", true);
             Scribe_Values.Look(ref degradationFactor, "degradationFactor", 1f);
-            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolWearFactor, degradationFactor);
 
             Scribe_Values.Look(ref alertToolNeedsReplacing, "alertToolNeedsReplacing", true);
             Scribe_Values.Look(ref alertToolNeedsReplacing_Delay, "alertToolNeedsReplacing_Delay", 1);
@@ -166,7 +165,6 @@ namespace ToolsFramework
 
             Scribe_Values.Look(ref equipDelay, "equipDelay", true);
             Scribe_Values.Look(ref equipDelayFactor, "equipDelayFactor", 1f);
-            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolReadinessDelay, equipDelayFactor);
 
             Scribe_Values.Look(ref optimization, "optimization", true);
             Scribe_Values.Look(ref optimizationDelay, "optimizationDelay", 1);
@@ -177,6 +175,8 @@ namespace ToolsFramework
             Scribe_Values.Look(ref opportunisticReturnTool_onlyMemory, "opportunisticReturnTool_onlyMemory", true);
             Scribe_Values.Look(ref opportunisticTakeTool, "opportunisticTakeTool", true);
             Scribe_Values.Look(ref opportunisticTakeTool_calcPath, "opportunisticTakeTool_calcPath", true);
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolReadinessDelay, ToolsFramework.Settings.equipDelayFactor);
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolWearFactor, ToolsFramework.Settings.degradationFactor);
         }
     }
 }

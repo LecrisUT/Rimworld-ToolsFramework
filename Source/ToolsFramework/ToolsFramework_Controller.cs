@@ -30,7 +30,9 @@ namespace ToolsFramework
             }
             if (ModsConfig.IsActive("petetimessix.simplesidearms") || ModsConfig.IsActive("petetimessix.simplesidearms_local") || ModsConfig.IsActive("petetimessix.simplesidearms_steam") || ModsConfig.IsActive("petetimessix.simplesidearms_copy"))
                 harmony.Unpatch(AccessTools.Constructor(typeof(Toil)), HarmonyPatchType.Postfix, "PeteTimesSix.SimpleSidearms");
-            ToolsFramework.thisMod.GetSettings<Settings>();
+            BaseMod.thisMod.GetSettings<Settings>();
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolReadinessDelay, ToolsFramework.Settings.equipDelayFactor);
+            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolWearFactor, ToolsFramework.Settings.degradationFactor);
         }
     }
 }
