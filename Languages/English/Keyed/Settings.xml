@@ -31,4 +31,9 @@
     <TF_optimizationDelay_tooltip>In game time between optimization checks</TF_optimizationDelay_tooltip>
     <TF_mapTrackerDelay>Map tools update interval</TF_mapTrackerDelay>
     <TF_mapTrackerDelay_tooltip>In game time between a map's tool list update.</TF_mapTrackerDelay_tooltip>
+
+    <TF_opportunisticTakeTool>Pick tools opportunistically</TF_opportunisticTakeTool>
+    <TF_opportunisticTakeTool_tooltip>Pawns will pick up the closest tool in storage if it's better before heading out to perform tool jobs</TF_opportunisticTakeTool_tooltip>
+    <TF_opportunisticTakeTool_calcPath>Calculate real opportunistic patch</TF_opportunisticTakeTool_calcPath>
+    <TF_opportunisticTakeTool_calcPath_tooltip>When searching for closest tool to pick up, calculate the actual pawn's path</TF_opportunisticTakeTool_calcPath_tooltip>
 </LanguageData>
