@@ -21,7 +21,8 @@ namespace ToolsFramework
 
         public static bool optimization = true;
         public static int optimizationDelay = 1;
-        public static int mapTrackerDelay = 250;
+        public static int mapTrackerDelay_StoredTools = 250;
+        public static int mapTrackerDelay_UseableTools = 250;
 
         public static bool opportunisticToolJobs = true;
         public static bool opportunisticReturnTool = true;
@@ -95,12 +96,20 @@ namespace ToolsFramework
                     tooltip: "TF_optimizationDelay_tooltip".Translate());
                 optimizationDelay = Mathf.RoundToInt(options.Slider(optimizationDelay, GenDate.TicksPerHour, GenDate.TicksPerYear));
                 options.Gap();
-                days = Mathf.FloorToInt((float)mapTrackerDelay / GenDate.TicksPerDay);
-                hours = ((float)mapTrackerDelay - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
-                options.Label("TF_mapTrackerDelay".Translate() + $"\t{days} " + "DaysLower".Translate() +
+                days = Mathf.FloorToInt((float)mapTrackerDelay_StoredTools / GenDate.TicksPerDay);
+                hours = ((float)mapTrackerDelay_StoredTools - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
+                options.Label("TF_mapTrackerDelay_Stored".Translate() + $"\t{days} " + "DaysLower".Translate() +
                     $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
-                    tooltip: "TF_mapTrackerDelay_tooltip".Translate());
-                mapTrackerDelay = Mathf.RoundToInt(options.Slider(mapTrackerDelay, GenDate.TicksPerHour, GenDate.TicksPerYear));
+                    tooltip: "TF_mapTrackerDelay_Stored_tooltip".Translate());
+                mapTrackerDelay_StoredTools = Mathf.RoundToInt(options.Slider(mapTrackerDelay_StoredTools, GenDate.TicksPerHour, GenDate.TicksPerYear));
+                days = Mathf.FloorToInt((float)mapTrackerDelay_UseableTools / GenDate.TicksPerDay);
+                hours = ((float)mapTrackerDelay_UseableTools - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
+                options.Label("TF_mapTrackerDelay_Useable".Translate() + $"\t{days} " + "DaysLower".Translate() +
+                    $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
+                    tooltip: "TF_mapTrackerDelay_Useable_tooltip".Translate());
+                mapTrackerDelay_UseableTools = Mathf.RoundToInt(options.Slider(mapTrackerDelay_UseableTools, GenDate.TicksPerHour, GenDate.TicksPerYear));
+                if (mapTrackerDelay_UseableTools > mapTrackerDelay_StoredTools)
+                    mapTrackerDelay_UseableTools = mapTrackerDelay_StoredTools;
             }
             options.Gap();
             options.CheckboxLabeled("TF_opportunisticToolJobs".Translate(), ref opportunisticToolJobs, "TF_opportunisticToolJobs_tooltip".Translate());
@@ -168,7 +177,8 @@ namespace ToolsFramework
 
             Scribe_Values.Look(ref optimization, "optimization", true);
             Scribe_Values.Look(ref optimizationDelay, "optimizationDelay", 1);
-            Scribe_Values.Look(ref mapTrackerDelay, "mapTrackerDelay", 250);
+            Scribe_Values.Look(ref mapTrackerDelay_StoredTools, "mapTrackerDelay_StoredTools", 250);
+            Scribe_Values.Look(ref mapTrackerDelay_UseableTools, "mapTrackerDelay_UseableTools", 250);
 
             Scribe_Values.Look(ref opportunisticToolJobs, "opportunisticToolJobs", true);
             Scribe_Values.Look(ref opportunisticReturnTool, "opportunisticReturnTool", true);

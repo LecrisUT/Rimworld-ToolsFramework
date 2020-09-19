@@ -29,8 +29,10 @@
     <TF_optimization_tooltip>Optimize the tool loadout according to the pawn's current work settings.</TF_optimization_tooltip>
     <TF_optimizationDelay>Optimization frequency</TF_optimizationDelay>
     <TF_optimizationDelay_tooltip>In game time between optimization checks</TF_optimizationDelay_tooltip>
-    <TF_mapTrackerDelay>Map tools update interval</TF_mapTrackerDelay>
-    <TF_mapTrackerDelay_tooltip>In game time between a map's tool list update.</TF_mapTrackerDelay_tooltip>
+    <TF_mapTrackerDelay_Stored>Stored map tools update interval</TF_mapTrackerDelay_Stored>
+    <TF_mapTrackerDelay_Stored_tooltip>In game time when the list of stored tools is updated.</TF_mapTrackerDelay_Stored_tooltip>
+    <TF_mapTrackerDelay_Useable>Useable map tools update interval</TF_mapTrackerDelay_Useable>
+    <TF_mapTrackerDelay_Useable_tooltip>In game time when the list of free tools is updated.</TF_mapTrackerDelay_Useable_tooltip>
 
     <TF_opportunisticTakeTool>Pick tools opportunistically</TF_opportunisticTakeTool>
     <TF_opportunisticTakeTool_tooltip>Pawns will pick up the closest tool in storage if it's better before heading out to perform tool jobs</TF_opportunisticTakeTool_tooltip>

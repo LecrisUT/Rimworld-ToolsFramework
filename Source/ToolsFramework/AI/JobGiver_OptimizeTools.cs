@@ -35,23 +35,20 @@ namespace ToolsFramework
             var extraTools = heldTools.Except(neededTools).ToList();
             // Get better tools
             var toolsToGet = new List<Tool>();
-            var mapTools = mapTracker.BestTools;
-            var bestMapToolThings = mapTracker.BestToolThings;
-            var mapToolThings = mapTracker.StoredToolThings;
             var reservation = pawn.MapHeld.reservationManager;
             var faction = pawn.Faction;
             var assignmentFilter = tracker.ToolAssignment.filter;
             foreach (var toolType in neededToolTypes)
             {
-                var mapTool = mapTools[toolType];
+                var mapTool = mapTracker.BestTool(toolType);
                 if (mapTool == null)
                     continue;
                 if (mapTool.IsForbidden(pawn) || reservation.IsReservedByAnyoneOf(mapTool, faction))
                 {
                     mapTool = null;
-                    foreach (var thingDef in bestMapToolThings.Keys)
+                    foreach (var thingDef in Utility.AllToolDefs)
                     {
-                        var tool = bestMapToolThings[thingDef];
+                        var tool = mapTracker.BestTool(thingDef);
                         if (tool == null)
                             continue;
                         if (assignmentFilter.Allows(thingDef) && !reservation.IsReservedByAnyoneOf(tool, faction) && thingDef.IsTool(out var prop) && prop.ToolTypes.Contains(toolType))
@@ -59,7 +56,7 @@ namespace ToolsFramework
                             if (!tool.IsForbidden(pawn))
                                 mapTool = tool;
                             else
-                                foreach (var otherTool in mapToolThings[thingDef])
+                                foreach (var otherTool in mapTracker.StoredToolThings(thingDef))
                                     if (!otherTool.IsForbidden(pawn) && otherTool.GetValue(toolType) > mapTool.GetValue(toolType, 0f))
                                         mapTool = otherTool;
                         }
