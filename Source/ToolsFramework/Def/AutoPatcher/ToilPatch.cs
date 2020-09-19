@@ -141,7 +141,7 @@ namespace ToolsFramework.AutoPatcher
             var pawn = driver.pawn;
             var job = driver.job;
             bool newToil = false;
-            if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(job.def, out var toolType))
+            if (!pawn.CanUseTools(out var tracker) || !Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
                 return false;
             var tool = tracker.UsedHandler.BestTool[toolType];
             if (tool == null)
@@ -165,7 +165,7 @@ namespace ToolsFramework.AutoPatcher
 #if DEBUG
             Log.Message($"Test 3.0: {ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType2)} : {toolType2}");
 #endif
-            if (!pawn.CanUseTools(out var tracker) || !ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType))
+            if (!pawn.CanUseTools(out var tracker) || !Dictionaries.jobToolType.TryGetValue(driver.job.def, out var toolType))
                 return;
 
             var tool = tracker.UsedHandler.BestTool[toolType];

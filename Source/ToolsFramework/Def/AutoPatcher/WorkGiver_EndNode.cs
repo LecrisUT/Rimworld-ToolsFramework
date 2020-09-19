@@ -24,7 +24,7 @@ namespace ToolsFramework.AutoPatcher
             for (int i = 0; i < workGivers.Count; i++)
             {
                 var wg = workGivers[i];
-                var toolTypes = jobDefs[i].Where(t => ToolType.jobToolType.ContainsKey(t))?.Select(t => ToolType.jobToolType[t])?.ToList() ?? new List<ToolType>();
+                var toolTypes = jobDefs[i].Where(t => Dictionaries.jobToolType.ContainsKey(t))?.Select(t => Dictionaries.jobToolType[t])?.ToList() ?? new List<ToolType>();
                 toolTypes.RemoveDuplicates();
                 if (!toolTypes.NullOrEmpty())
                     foreach (var wgDef in DefDatabase<WorkGiverDef>.AllDefs.Where(t => t.giverClass.IsAssignableFrom(wg)))

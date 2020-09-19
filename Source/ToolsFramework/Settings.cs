@@ -175,8 +175,8 @@ namespace ToolsFramework
             Scribe_Values.Look(ref opportunisticReturnTool_onlyMemory, "opportunisticReturnTool_onlyMemory", true);
             Scribe_Values.Look(ref opportunisticTakeTool, "opportunisticTakeTool", true);
             Scribe_Values.Look(ref opportunisticTakeTool_calcPath, "opportunisticTakeTool_calcPath", true);
-            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolReadinessDelay, ToolsFramework.Settings.equipDelayFactor);
-            StatPart_Settings.Settings.SetOrAdd(StatDefOf.ToolWearFactor, ToolsFramework.Settings.degradationFactor);
+            Dictionaries.StatPartSettings.SetOrAdd(StatDefOf.ToolReadinessDelay, equipDelayFactor);
+            Dictionaries.StatPartSettings.SetOrAdd(StatDefOf.ToolWearFactor, degradationFactor);
         }
     }
 }

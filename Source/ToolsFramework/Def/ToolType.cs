@@ -8,7 +8,8 @@ namespace ToolsFramework
 {
     public class ToolType : Def
     {
-        public static Dictionary<JobDef, ToolType> jobToolType = new Dictionary<JobDef, ToolType>();
+        [Obsolete]
+        public static Dictionary<JobDef, ToolType> jobToolType => Dictionaries.jobToolType;
         public static List<ToolType> allToolTypes => DefDatabase<ToolType>.AllDefs.ToList();
 
         public List<StatModifier> efficiencyModifiers = new List<StatModifier>();

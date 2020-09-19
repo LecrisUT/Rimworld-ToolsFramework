@@ -74,6 +74,7 @@
     <Compile Include="BaseMod.cs" />
     <Compile Include="Comps\Map_ToolTracker.cs" />
     <Compile Include="Comps\Pawn_ToolTracker.cs" />
+    <Compile Include="Databases\Dictionaries.cs" />
     <Compile Include="DefOf\ThingCategoryDefOf.cs" />
     <Compile Include="DefOf\JobDefOf.cs" />
     <Compile Include="DefOf\StatCategoryDefOf.cs" />
@@ -126,7 +127,7 @@
     <Compile Include="ToolAssignment\Dialog_ManageToolAssignments.cs" />
     <Compile Include="ToolAssignment\PawnColumnWorker_ToolAssignment.cs" />
     <Compile Include="ToolAssignment\ToolAssignment.cs" />
-    <Compile Include="ToolAssignment\ToolAssignment_Database.cs" />
+    <Compile Include="Databases\ToolAssignment_Database.cs" />
     <Compile Include="ToolsFramework_Controller.cs" />
   </ItemGroup>
   <ItemGroup>

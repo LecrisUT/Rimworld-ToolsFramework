@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Verse;
@@ -7,12 +8,13 @@ namespace ToolsFramework
 {
     public class StatPart_Settings : StatPart
     {
-        public static Dictionary<StatDef, float> Settings = new Dictionary<StatDef, float>();
+        [Obsolete]
+        public static Dictionary<StatDef, float> Settings => Dictionaries.StatPartSettings;
         public override void TransformValue(StatRequest req, ref float val)
-            => val *= Settings[parentStat];
+            => val *= Dictionaries.StatPartSettings[parentStat];
         public override string ExplanationPart(StatRequest req)
         {
-            var val = Settings[parentStat];
+            var val = Dictionaries.StatPartSettings[parentStat];
             if (val == 1f)
                 return null;
             var stringBuilder = new StringBuilder();

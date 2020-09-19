@@ -59,7 +59,7 @@ namespace ToolsFramework.Harmony
             if (!pawn.CanUseTools(out var tracker) || pawn.InMentalState || pawn.IsBurning())
                 return false;
             var jobDef = currJob.def;
-            var toolType = ToolType.jobToolType.TryGetValue(jobDef);
+            var toolType = Dictionaries.jobToolType.TryGetValue(jobDef);
             var toolList = tracker.memoryTool.ToList();
             if (toolType != null)
                 toolList.RemoveAll(t => t.ToolTypes.Contains(toolType));
@@ -101,7 +101,7 @@ namespace ToolsFramework.Harmony
                     return false;
                 if (tracker.UsedHandler.BestTool[toolType] != null)
                     return false;
-                var mapTracker = pawn.MapHeld.GetComponent<Map_ToolTracker>();
+                var mapTracker = pawn.MapHeld.GetMapToolTracker();
                 var tool = mapTracker.ClosestTool(toolType, pawn.PositionHeld, pawn);
                 if (tool != null)
                 {

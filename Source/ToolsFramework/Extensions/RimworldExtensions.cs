@@ -23,10 +23,38 @@ namespace ToolsFramework
             }
             return false;
         }
+        public static bool TryGetMapToolTracker(this Map map, out Map_ToolTracker tracker)
+        {
+            tracker = null;
+            if (map == null)
+                return false;
+            tracker = map.GetMapToolTracker();
+            return tracker != null;
+        }
+        public static Map_ToolTracker GetMapToolTracker(this Map map)
+        {
+            if (!Dictionaries.MapToolTrackers.TryGetValue(map, out var tracker))
+            {
+                tracker = map.GetComponent<Map_ToolTracker>();
+                Dictionaries.MapToolTrackers.Add(map, tracker);
+            }
+            return tracker;
+        }
         public static bool CanUseTools(this Pawn pawn)
             => pawn.CanUseTools(out _);
         public static bool CanUseTools(this Pawn pawn, out Pawn_ToolTracker tracker)
-            => (tracker = pawn.TryGetComp<Pawn_ToolTracker>()) != null;
+        {
+            tracker = null;
+            if (pawn == null)
+                return false;
+            if (!Dictionaries.PawnToolTrackers.TryGetValue(pawn, out tracker))
+            {
+                tracker = pawn.GetComp<Pawn_ToolTracker>();
+                if (tracker != null)
+                    Dictionaries.PawnToolTrackers.Add(pawn, tracker);
+            }
+            return tracker != null;
+        }
         public static void EquipTool(this Pawn pawn)
         {
             if (pawn.CanUseTools(out var tracker))

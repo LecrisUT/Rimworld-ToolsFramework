@@ -17,7 +17,7 @@ namespace ToolsFramework
                 return null;
             if (tracker.optimizingTool && (pawn.CurJobDef?.HasModExtension<Job_Extension>() ?? false))
                 return null;
-            if (tracker.optimizingTool || tracker.NecessaryToolTypes.EnumerableNullOrEmpty() || !(pawn.MapHeld?.GetComponent<Map_ToolTracker>() is Map_ToolTracker mapTracker))
+            if (tracker.optimizingTool || tracker.NecessaryToolTypes.EnumerableNullOrEmpty() || !pawn.MapHeld.TryGetMapToolTracker(out var mapTracker))
                 goto NoJobs;
             // Remove extra Tools
             var jobs = new List<Job>();

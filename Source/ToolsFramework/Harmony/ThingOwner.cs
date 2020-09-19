@@ -42,7 +42,7 @@ namespace ToolsFramework.Harmony
                 tracker.UsedHandler.HeldToolsList.Remove(tool);
                 if (pawn.CurJobDef.IsReturningTool())
                     tracker.memoryTool.Remove(tool);
-                if (pawn.CurJobDef != null && ToolType.jobToolType.ContainsKey(pawn.CurJobDef))
+                if (pawn.CurJobDef != null && Dictionaries.jobToolType.ContainsKey(pawn.CurJobDef))
                     pawn.jobs.EndCurrentJob(Verse.AI.JobCondition.InterruptOptional);
 #if DEBUG
                 var test = new System.Text.StringBuilder($"Test 1.1: Tool pick-up: {pawn} : {tool}\nHeldTools:\n");

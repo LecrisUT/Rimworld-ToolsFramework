@@ -35,7 +35,7 @@ namespace ToolsFramework.AutoPatcher
             {
                 toolType.Initialize();
                 if (!toolType.jobList.NullOrEmpty())
-                    toolType.jobList.Do(t => ToolType.jobToolType.Add(t, toolType));
+                    toolType.jobList.Do(t => Dictionaries.jobToolType.Add(t, toolType));
                 else
                 {
                     var jobList = new List<JobDef>();
@@ -45,7 +45,7 @@ namespace ToolsFramework.AutoPatcher
                     jobList.RemoveDuplicates();
                     foreach (var job in jobList.Where(t => !toolType.jobException.Contains(t)))
                     {
-                        if (ToolType.jobToolType.ContainsKey(job))
+                        if (Dictionaries.jobToolType.ContainsKey(job))
                         {
                             if (duplicateToolType.TryGetValue(job, out var list))
                             {
@@ -54,18 +54,18 @@ namespace ToolsFramework.AutoPatcher
                             else
                                 duplicateToolType.Add(job, new List<ToolType>
                                 {
-                                    ToolType.jobToolType[job],
+                                    Dictionaries.jobToolType[job],
                                     toolType,
                                 });
                         }
                         else
-                            ToolType.jobToolType.Add(job, toolType);
+                            Dictionaries.jobToolType.Add(job, toolType);
                     }
                 }
             }
             if (!duplicateToolType.EnumerableNullOrEmpty())
             {
-                duplicateToolType.Keys.Do(t => ToolType.jobToolType.Remove(t));
+                duplicateToolType.Keys.Do(t => Dictionaries.jobToolType.Remove(t));
                 if (node.DebugLevel > -1)
                 {
                     var warn = new StringBuilder("TF_BaseMessage".Translate() + ": Following jobs are ignored due to duplicate ToolTypes assigned:\n");
@@ -84,7 +84,7 @@ namespace ToolsFramework.AutoPatcher
             if (node.DebugLevel > 0)
             {
                 node.DebugMessage.AppendLine("TF_BaseMessage".Translate() + " JobDef <-> ToolType assignment");
-                ToolType.jobToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key} : {t.Value}"));
+                Dictionaries.jobToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key} : {t.Value}"));
                 node.DebugMessage.AppendLine();
             }
             return true;

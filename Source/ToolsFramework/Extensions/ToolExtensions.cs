@@ -90,7 +90,7 @@ namespace ToolsFramework
         public static bool TryGetValue(this Tool tool, JobDef job, out float val)
         {
             val = 0f;
-            if (tool == null || !ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(toolType, out val))
+            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(toolType, out val))
                 return false;
             var toolProp = tool.ToolProperties;
             val *= toolProp.jobBonus.GetJobValueFromList(job, 1f);
@@ -99,7 +99,7 @@ namespace ToolsFramework
         public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float val)
         {
             val = 0f;
-            if (tool == null || !ToolType.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out val))
+            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out val))
                 return false;
             val *= toolType.workStatFactors.GetStatFactorFromList(stat);
             return true;
