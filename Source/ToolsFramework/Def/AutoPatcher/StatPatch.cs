@@ -74,7 +74,7 @@ namespace ToolsFramework.AutoPatcher
         public static float GetStatValueJob(this Pawn pawn, StatDef stat, Job job, bool applyPostProcess = true)
         {
             var val = pawn.GetStatValue(stat, applyPostProcess);
-            if (!Dictionaries.jobToolType.ContainsKey(job.def))
+            if (!Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
             {
 #if DEBUG
                 Log.Message($"Test 1.0: Not in job list {pawn} : {stat} : {job.def} : {val}");
@@ -92,9 +92,9 @@ namespace ToolsFramework.AutoPatcher
 #if DEBUG
             Log.Message($"Test 1.2: No tool found {pawn} : {stat} : {job.def} : {GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess)}");
 #endif
-            return GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess);
+            return GetStatValueJob_Fallback(val, pawn, stat, job, toolType, applyPostProcess);
         }
-        public static float GetStatValueJob_Fallback(float orig, Pawn pawn, StatDef stat, Job job, bool applyPostProcess)
+        public static float GetStatValueJob_Fallback(float orig, Pawn pawn, StatDef stat, Job job, ToolType toolType, bool applyPostProcess)
             => orig;
     }
 }
