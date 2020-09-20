@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ToolsFramework.Harmony;
+using UnityEngine;
 using Verse;
 
 namespace ToolsFramework
@@ -96,20 +97,36 @@ namespace ToolsFramework
             val *= toolProp.jobBonus.GetJobValueFromList(job, 1f);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float val)
+        public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float factor, out float offset)
         {
-            val = 0f;
-            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out val))
+            factor = 1f;
+            offset = 0f;
+            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out var val))
                 return false;
-            val *= toolType.workStatFactors.GetStatFactorFromList(stat);
+            factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
+            if (factor != 0f)
+                factor *= val;
+            else
+                factor = 1f;
+            offset = toolType.workStatOffset.GetStatValueFromList(stat, 0f);
+            if (offset != 0f)
+                offset = val - offset;
             return true;
         }
-        public static bool TryGetValue(this Tool tool, ToolType toolType, StatDef stat, out float val)
+        public static bool TryGetValue(this Tool tool, ToolType toolType, StatDef stat, out float factor, out float offset)
         {
-            val = 0f;
-            if (tool == null || !tool.TryGetValue(toolType, out val))
+            factor = 1f;
+            offset = 0f;
+            if (tool == null || !tool.TryGetValue(toolType, out var val))
                 return false;
-            val *= toolType.workStatFactors.GetStatFactorFromList(stat);
+            factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
+            if (factor != 0f)
+                factor *= val;
+            else
+                factor = 1f;
+            offset = toolType.workStatOffset.GetStatValueFromList(stat, 0f);
+            if (offset != 0f)
+                offset = val - offset;
             return true;
         }
         public static float GetValue(this Tool tool, ToolType toolType, float fallback = 0f)
@@ -121,18 +138,6 @@ namespace ToolsFramework
         public static float GetValue(this Tool tool, JobDef job, float fallback = 0f)
         {
             if (tool.TryGetValue(job, out float val))
-                return val;
-            return fallback;
-        }
-        public static float GetValue(this Tool tool, JobDef job, StatDef stat, float fallback = 0f)
-        {
-            if (tool.TryGetValue(job, stat, out float val))
-                return val;
-            return fallback;
-        }
-        public static float GetValue(this Tool tool, ToolType toolType, StatDef stat, float fallback = 0f)
-        {
-            if (tool.TryGetValue(toolType, stat, out float val))
                 return val;
             return fallback;
         }

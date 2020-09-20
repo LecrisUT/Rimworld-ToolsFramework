@@ -34,8 +34,12 @@ namespace ToolsFramework.Harmony
         }
         private static void ReportText(ref StringBuilder stringBuilder, Pawn pawn, StatDef stat, Tool tool, ToolType toolType, float origVal)
         {
-            var toolVal = tool.GetValue(toolType, stat, 1f);
-            stringBuilder.Append("  " + toolType.LabelCap + " : x" + toolVal + " = " + (origVal * toolVal).ToStringPercent());
+            tool.TryGetValue(toolType, stat, out var fac, out var off);
+#if DEBUG
+            stringBuilder.Append("  " + toolType.LabelCap + " : + " + off.ToStringPercent("F2") + " x " + fac.ToStringPercent("F2") + " = " + ((origVal + off) * fac).ToStringPercent("F2"));
+#else
+            stringBuilder.Append("  " + toolType.LabelCap + " : = " + ((origVal + off) * fac).ToStringPercent("F2"));
+#endif
             if (tool == null)
                 stringBuilder.AppendLine(" [" + "NoTool".Translate() + "]");
             else

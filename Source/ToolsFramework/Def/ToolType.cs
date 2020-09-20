@@ -14,6 +14,7 @@ namespace ToolsFramework
 
         public List<StatModifier> efficiencyModifiers = new List<StatModifier>();
         public List<StatModifier> workStatFactors = new List<StatModifier>();
+        public List<StatModifier> workStatOffset = new List<StatModifier>();
 
         public List<JobDef> jobList = new List<JobDef>();
         public List<JobDef> jobException = new List<JobDef>();

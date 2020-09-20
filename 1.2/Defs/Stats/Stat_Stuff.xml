@@ -7,7 +7,7 @@
         <category>Tools</category>
         <displayPriorityInCategory>100</displayPriorityInCategory>
         <defaultBaseValue>1</defaultBaseValue>
-        <minValue>0.5</minValue>
+        <minValue>0.8</minValue>
         <maxValue>2</maxValue>
         <showIfUndefined>false</showIfUndefined>
     </StatDef>
@@ -20,7 +20,7 @@
         <category>Tools</category>
         <displayPriorityInCategory>100</displayPriorityInCategory>
         <defaultBaseValue>1</defaultBaseValue>
-        <minValue>0.5</minValue>
+        <minValue>0.8</minValue>
         <maxValue>2</maxValue>
         <showIfUndefined>false</showIfUndefined>
     </StatDef>

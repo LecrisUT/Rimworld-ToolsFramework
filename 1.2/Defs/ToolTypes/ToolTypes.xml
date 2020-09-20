@@ -28,6 +28,9 @@
         <workStatFactors>
             <PlantWorkSpeed>1.0</PlantWorkSpeed>
         </workStatFactors>
+        <workStatOffset>
+            <PlantHarvestYield>1.0</PlantHarvestYield>
+        </workStatOffset>
         <efficiencyModifiers>
             <Tool_Sharpness>0.7</Tool_Sharpness>
             <Tool_Hardness>0.3</Tool_Hardness>
@@ -47,8 +50,10 @@
         <label>shearing tool</label>
         <workStatFactors>
             <AnimalGatherSpeed>1.0</AnimalGatherSpeed>
-            <AnimalGatherYield>1.0</AnimalGatherYield>
         </workStatFactors>
+        <workStatOffset>
+            <AnimalGatherYield>1.0</AnimalGatherYield>
+        </workStatOffset>
         <efficiencyModifiers>
             <Tool_Sharpness>1.0</Tool_Sharpness>
         </efficiencyModifiers>
@@ -66,8 +71,10 @@
         <label>animal gathering tool</label>
         <workStatFactors>
             <AnimalGatherSpeed>1.0</AnimalGatherSpeed>
-            <AnimalGatherYield>1.0</AnimalGatherYield>
         </workStatFactors>
+        <workStatOffset>
+            <AnimalGatherYield>1.0</AnimalGatherYield>
+        </workStatOffset>
         <jobDriverList>
             <li>JobDriver_GatherAnimalBodyResources</li>
         </jobDriverList>
@@ -86,9 +93,11 @@
         <label>construction tool</label>
         <workStatFactors>
             <ConstructionSpeed>1.0</ConstructionSpeed>
+        </workStatFactors>
+        <workStatOffset>
             <ConstructSuccessChance>1.0</ConstructSuccessChance>
             <FixBrokenDownBuildingSuccessChance>1.0</FixBrokenDownBuildingSuccessChance>
-        </workStatFactors>
+        </workStatOffset>
         <efficiencyModifiers>
             <Tool_Hardness>1.0</Tool_Hardness>
         </efficiencyModifiers>
@@ -122,8 +131,10 @@
         <label>mining tool</label>
         <workStatFactors>
             <MiningSpeed>1.0</MiningSpeed>
-            <MiningYield>1.0</MiningYield>
         </workStatFactors>
+        <workStatOffset>
+            <MiningYield>1.0</MiningYield>
+        </workStatOffset>
         <efficiencyModifiers>
             <Tool_Sharpness>0.3</Tool_Sharpness>
             <Tool_Hardness>0.7</Tool_Hardness>

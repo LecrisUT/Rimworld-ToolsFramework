@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+    <Performance_Settings>Performance settings</Performance_Settings>
+    <Gameplay_Settings>Gameplay settings</Gameplay_Settings>
+
     <!-- Tools settings -->
     <TF_degredation>Degradation</TF_degredation>
     <TF_degredation_tooltip>Degrade tools every tick.</TF_degredation_tooltip>
@@ -34,8 +37,13 @@
     <TF_mapTrackerDelay_Useable>Useable map tools update interval</TF_mapTrackerDelay_Useable>
     <TF_mapTrackerDelay_Useable_tooltip>In game time when the list of free tools is updated.</TF_mapTrackerDelay_Useable_tooltip>
 
+
+    <TF_opportunisticToolJobs>Opportunistic tool jobs</TF_opportunisticToolJobs>
+    <TF_opportunisticToolJobs_tooltip>Toggle various oppotunistic jobs for managing tool loadout before going to jobs.</TF_opportunisticToolJobs_tooltip>
     <TF_opportunisticTakeTool>Pick tools opportunistically</TF_opportunisticTakeTool>
-    <TF_opportunisticTakeTool_tooltip>Pawns will pick up the closest tool in storage if it's better before heading out to perform tool jobs</TF_opportunisticTakeTool_tooltip>
-    <TF_opportunisticTakeTool_calcPath>Calculate real opportunistic patch</TF_opportunisticTakeTool_calcPath>
+    <TF_opportunisticTakeTool_tooltip>Pawns will pick up the closest tool in storage if it's better before heading out to perform tool jobs.</TF_opportunisticTakeTool_tooltip>
+    <TF_opportunisticReturnTool>Return temporary tool</TF_opportunisticReturnTool>
+    <TF_opportunisticReturnTool_tooltip>Pawns will return the temporarily picked up tool to an appropriate storage on the way to other jobs.</TF_opportunisticReturnTool_tooltip>
+    <TF_opportunisticTakeTool_calcPath>Calculate real opportunistic path</TF_opportunisticTakeTool_calcPath>
     <TF_opportunisticTakeTool_calcPath_tooltip>When searching for closest tool to pick up, calculate the actual pawn's path</TF_opportunisticTakeTool_calcPath_tooltip>
 </LanguageData>

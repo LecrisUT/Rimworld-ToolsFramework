@@ -28,6 +28,7 @@ namespace ToolsFramework
                 {
                     statsToToolType = new Dictionary<StatDef, List<ToolType>>();
                     foreach (var toolType in ToolType.allToolTypes)
+                    {
                         foreach (var stat in toolType.workStatFactors.Select(t => t.stat))
                         {
                             if (!statsToToolType.TryGetValue(stat, out var list))
@@ -35,8 +36,18 @@ namespace ToolsFramework
                                 statsToToolType.Add(stat, new List<ToolType> { toolType });
                                 continue;
                             }
-                            list.Add(toolType);
+                            list.AddDistinct(toolType);
                         }
+                        foreach (var stat in toolType.workStatOffset.Select(t => t.stat))
+                        {
+                            if (!statsToToolType.TryGetValue(stat, out var list))
+                            {
+                                statsToToolType.Add(stat, new List<ToolType> { toolType });
+                                continue;
+                            }
+                            list.AddDistinct(toolType);
+                        }
+                    }
                 }
                 return statsToToolType;
             }

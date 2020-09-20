@@ -83,14 +83,14 @@ namespace ToolsFramework.AutoPatcher
             }
             if (pawn.CanUseTools(out var tracker) && tracker.toolInUse is Tool tool)
             {
-                var mod = tool.GetValue(job.def, stat);
+                tool.TryGetValue(job.def, stat, out var fac, out var off);
 #if DEBUG
-                Log.Message($"Test 1.1: Use tool {pawn} : {tool} : {stat} : {job.def} : {val} * {mod}");
+                Log.Message($"Test 1.1: Use tool {pawn} : {tool} : {stat} : {job.def} : {val} -> {(val + off) * fac}");
 #endif
-                return val * mod;
+                return (val + off) * fac;
             }
 #if DEBUG
-            Log.Message($"Test 1.2: No tool found {pawn} : {stat} : {job.def} : {GetStatValueJob_Fallback(val, pawn, stat, job, applyPostProcess)}");
+            Log.Message($"Test 1.2: No tool found {pawn} : {stat} : {job.def} : {GetStatValueJob_Fallback(val, pawn, stat, job, toolType, applyPostProcess)}");
 #endif
             return GetStatValueJob_Fallback(val, pawn, stat, job, toolType, applyPostProcess);
         }

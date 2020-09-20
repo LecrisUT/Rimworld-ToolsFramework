@@ -30,25 +30,26 @@ namespace ToolsFramework
         public static bool opportunisticTakeTool = true;
         public static bool opportunisticTakeTool_calcPath = true;
 
+        private Vector2 scrollPosition = Vector2.zero;
         public void DoWindowContents(Rect wrect)
         {
-            Listing_Standard options = new Listing_Standard();
-            Color defaultColor = GUI.color;
-            options.Begin(wrect);
-
-            GUI.color = defaultColor;
-            Text.Font = GameFont.Small;
-            Text.Anchor = TextAnchor.UpperLeft;
-            int days;
+            float days;
             float hours;
-            options.Gap();
-            options.CheckboxLabeled("TF_degredation".Translate(), ref degradation, "TF_degredation_tooltip".Translate());
+            // wrect.yMin += 15f;
+            // wrect.yMax -= 15f;
+
+            var options = new Listing_Standard();
+            // 
+            var outRect = new Rect(wrect.x, wrect.y, wrect.width, wrect.height);            // Size of viewed area
+            var scrollRect = new Rect(0f, 0f, wrect.width - 16f, wrect.height * 1.5f);      // Size of content data
+            Widgets.BeginScrollView(outRect, ref scrollPosition, scrollRect, true);
+
+            options.Begin(scrollRect);
+
+            Header(options, "Performance_Settings".Translate(), false);
+
             if (degradation)
             {
-                options.Gap();
-                options.Label("TF_degredationFactor".Translate() + $"\tx{degradationFactor.ToString("F02")}", tooltip: "TF_degredationFactor_tooltip".Translate());
-                degradationFactor = options.Slider(degradationFactor, 0.01f, 10f);
-                options.Gap();
                 options.CheckboxLabeled("TF_alertToolNeedsReplacing".Translate(), ref alertToolNeedsReplacing, "TF_alertToolNeedsReplacing_tooltip".Translate());
                 if (alertToolNeedsReplacing)
                 {
@@ -68,30 +69,12 @@ namespace ToolsFramework
                     alertToolNeedsReplacing_Treshold = options.Slider(alertToolNeedsReplacing_Treshold, 0.01f, 10f);
                 }
             }
-            options.Gap();
-            var equipString = equipTool ? "TF_equipTool_equip".Translate() : "TF_usefrominv".Translate();
-            options.CheckboxLabeled("TF_equipTool".Translate() + $": {equipString}", ref equipTool, "TF_equipTool_tooltip".Translate());
-            if (equipTool)
-            {
-                options.Gap();
-                options.CheckboxLabeled("TF_draw".Translate(), ref draw, "TF_draw_tooltip".Translate());
-            }
-            options.Gap();
-            options.CheckboxLabeled("TF_equipDelay".Translate(), ref equipDelay, "TF_equipDelay_tooltip".Translate());
-            if (equipDelay)
-            {
-                options.Gap();
-                options.Label("TF_equipDelayFactor".Translate() + $"\tx{equipDelayFactor.ToString("F02")}", tooltip: "TF_equipDelayFactor_tooltip".Translate());
-                equipDelayFactor = options.Slider(equipDelayFactor, 0.01f, 10);
-            }
-            options.Gap();
-            options.CheckboxLabeled("TF_optimization".Translate(), ref optimization, "TF_optimization_tooltip".Translate());
             if (optimization)
             {
                 options.Gap();
                 days = Mathf.FloorToInt((float)optimizationDelay / GenDate.TicksPerDay);
                 hours = ((float)optimizationDelay - days * GenDate.TicksPerDay) / GenDate.TicksPerHour;
-                options.Label("TF_optimizationDelay".Translate() + $"\t{days} " + "DaysLower".Translate() + 
+                options.Label("TF_optimizationDelay".Translate() + $"\t{days} " + "DaysLower".Translate() +
                     $"  {hours.ToString("F02")} " + "HoursLower".Translate(),
                     tooltip: "TF_optimizationDelay_tooltip".Translate());
                 optimizationDelay = Mathf.RoundToInt(options.Slider(optimizationDelay, GenDate.TicksPerHour, GenDate.TicksPerYear));
@@ -111,33 +94,63 @@ namespace ToolsFramework
                 if (mapTrackerDelay_UseableTools > mapTrackerDelay_StoredTools)
                     mapTrackerDelay_UseableTools = mapTrackerDelay_StoredTools;
             }
+            if (opportunisticTakeTool)
+            {
+                options.Gap();
+                if (ModsConfig.IsActive("fluffy.colonymanager"))
+                {
+                    options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
+                }
+                else
+                    options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
+            }
+            if (!degradation && !optimization && !opportunisticTakeTool)
+            {
+                GUI.color = Color.gray;
+                options.Label("NoPerformanceTweaks".Translate());
+                GUI.color = Color.white;
+            }
+
+            Header(options, "Gameplay_Settings".Translate(), false);
+
+            options.CheckboxLabeled("TF_degredation".Translate(), ref degradation, "TF_degredation_tooltip".Translate());
+            if (degradation)
+            {
+                options.Gap();
+                options.Label("TF_degredationFactor".Translate() + $"\tx{degradationFactor.ToString("F02")}", tooltip: "TF_degredationFactor_tooltip".Translate());
+                degradationFactor = options.Slider(degradationFactor, 0.01f, 10f);
+                options.Gap();
+            }
+            options.Gap();
+            var equipString = equipTool ? "TF_equipTool_equip".Translate() : "TF_usefrominv".Translate();
+            options.CheckboxLabeled("TF_equipTool".Translate() + $": {equipString}", ref equipTool, "TF_equipTool_tooltip".Translate());
+            if (equipTool)
+            {
+                options.Gap();
+                options.CheckboxLabeled("TF_draw".Translate(), ref draw, "TF_draw_tooltip".Translate());
+            }
+            options.Gap();
+            options.CheckboxLabeled("TF_equipDelay".Translate(), ref equipDelay, "TF_equipDelay_tooltip".Translate());
+            if (equipDelay)
+            {
+                options.Gap();
+                options.Label("TF_equipDelayFactor".Translate() + $"\tx{equipDelayFactor.ToString("F02")}", tooltip: "TF_equipDelayFactor_tooltip".Translate());
+                equipDelayFactor = options.Slider(equipDelayFactor, 0.01f, 10);
+            }
+            options.Gap();
+            options.CheckboxLabeled("TF_optimization".Translate(), ref optimization, "TF_optimization_tooltip".Translate());
             options.Gap();
             options.CheckboxLabeled("TF_opportunisticToolJobs".Translate(), ref opportunisticToolJobs, "TF_opportunisticToolJobs_tooltip".Translate());
             if (opportunisticToolJobs)
             {
                 options.Gap();
                 options.CheckboxLabeled("TF_opportunisticReturnTool".Translate(), ref opportunisticReturnTool, "TF_opportunisticReturnTool_tooltip".Translate());
-                if (opportunisticReturnTool)
-                {
-                    options.Gap();
-                    options.CheckboxLabeled("TF_opportunisticReturnTool_onlyMemory".Translate(), ref opportunisticReturnTool_onlyMemory, "TF_opportunisticReturnTool_onlyMemory_tooltip".Translate());
-                }
                 options.Gap();
                 options.CheckboxLabeled("TF_opportunisticTakeTool".Translate(), ref opportunisticTakeTool, "TF_opportunisticTakeTool_tooltip".Translate());
-                if (opportunisticTakeTool)
-                {
-                    options.Gap();
-                    if (ModsConfig.IsActive("fluffy.colonymanager"))
-                    {
-                        options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
-                    }
-                    else
-                        options.CheckboxLabeled("TF_opportunisticTakeTool_calcPath".Translate(), ref opportunisticTakeTool_calcPath, "TF_opportunisticTakeTool_calcPath_tooltip".Translate());
-                }
             }
             options.End();
-
-            Mod.GetSettings<Settings>().Write();
+            Widgets.EndScrollView();
+            // Mod.GetSettings<Settings>().Write();
         }
         #region Curves
         public static float ToolTotalScorePow = 0.5f;
@@ -160,6 +173,29 @@ namespace ToolsFramework
         };
         #endregion
 
+        private void Header(Listing_Standard options, string text, bool GapLine = true)
+        {
+            Header();
+            if (GapLine)
+                options.GapLine();
+            else
+                options.Gap();
+            options.Label(text);
+            options.Gap();
+            NormalText();
+        }
+        private void Header()
+        {
+            GUI.color = Color.cyan;
+            Text.Anchor = TextAnchor.UpperCenter;
+            Text.Font = GameFont.Medium;
+        }
+        private void NormalText()
+        {
+            GUI.color = Color.white;
+            Text.Anchor = TextAnchor.UpperLeft;
+            Text.Font = GameFont.Small;
+        }
         public override void ExposeData()
         {
             Scribe_Values.Look(ref degradation, "degradation", true);
