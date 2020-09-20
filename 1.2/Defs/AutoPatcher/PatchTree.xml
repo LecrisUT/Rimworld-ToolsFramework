@@ -5,7 +5,7 @@
         <DebugLevel>0</DebugLevel>
         <Nodes>
             <li Class="AutoPatcher.Node">
-                <nodeDef>AP_BeginNode_JobDriver</nodeDef>
+                <nodeDef>ToolsFramework_Filtered_JobDrivers</nodeDef>
                 <DebugLevel>0</DebugLevel>
                 <name>JobDrivers</name>
             </li>

@@ -74,7 +74,7 @@ namespace ToolsFramework.AutoPatcher
         public static float GetStatValueJob(this Pawn pawn, StatDef stat, Job job, bool applyPostProcess = true)
         {
             var val = pawn.GetStatValue(stat, applyPostProcess);
-            if (!Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
+            if (!Dictionaries.jobStatToolType.TryGetValue((job.def, stat), out var toolType))
             {
 #if DEBUG
                 Log.Message($"Test 1.0: Not in job list {pawn} : {stat} : {job.def} : {val}");

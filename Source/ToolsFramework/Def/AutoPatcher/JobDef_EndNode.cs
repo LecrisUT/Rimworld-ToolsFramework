@@ -42,6 +42,9 @@ namespace ToolsFramework.AutoPatcher
                     foreach (var stat in toolType.workStatFactors.Select(t => t.stat))
                         if (statJobDef.TryGetValue(stat, out var jobs))
                             jobList.AddRange(jobs);
+                    foreach (var stat in toolType.workStatOffset.Select(t => t.stat))
+                        if (statJobDef.TryGetValue(stat, out var jobs))
+                            jobList.AddRange(jobs);
                     jobList.RemoveDuplicates();
                     foreach (var job in jobList.Where(t => !toolType.jobException.Contains(t)))
                     {
@@ -81,10 +84,20 @@ namespace ToolsFramework.AutoPatcher
                 }
 
             }
+            foreach (var item in Dictionaries.jobToolType)
+            {
+                var toolType = item.Value;
+                var stats = toolType.workStatFactors.Select(t => t.stat).Union(toolType.workStatOffset.Select(t => t.stat)).ToList();
+                stats.RemoveDuplicates();
+                foreach (var stat in stats)
+                    Dictionaries.jobStatToolType.Add((item.Key, stat), toolType);
+            }
             if (node.DebugLevel > 0)
             {
                 node.DebugMessage.AppendLine("TF_BaseMessage".Translate() + " JobDef <-> ToolType assignment");
                 Dictionaries.jobToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key} : {t.Value}"));
+                node.DebugMessage.AppendLine("\n");
+                Dictionaries.jobStatToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key.job} : {t.Key.stat} : {t.Value}"));
                 node.DebugMessage.AppendLine();
             }
             return true;
