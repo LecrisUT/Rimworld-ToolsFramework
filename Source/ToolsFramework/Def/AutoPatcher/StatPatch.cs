@@ -99,7 +99,7 @@ namespace ToolsFramework.AutoPatcher
                 return GetStatValueJob_Fallback(val, pawn, stat, job, toolType2, applyPostProcess);
             }
             // Normal jobs
-            if (!Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
+            if (!Dictionaries.jobStatToolType.TryGetValue((job.def, stat), out var toolType))
             {
 #if DEBUG
                 Log.Message($"Test 1.0: Not in job list {pawn} : {stat} : {job.def} : {val}");

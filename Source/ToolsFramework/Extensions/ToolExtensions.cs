@@ -152,15 +152,22 @@ namespace ToolsFramework
                 return false;
             if (!tool.TryGetValue(job, out var val, toolType))
                 return false;
+            bool flag = false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
             if (factor != 0f)
+            {
                 factor *= val;
+                flag = true;
+            }
             else
                 factor = 1f;
             offset = toolType.workStatOffset.GetStatValueFromList(stat, 0f);
             if (offset != 0f)
+            {
+                flag = true;
                 offset = val - offset;
-            return true;
+            }
+            return flag;
         }
         public static bool TryGetValue(this Tool tool, ToolType toolType, StatDef stat, out float factor, out float offset)
         {
@@ -168,15 +175,22 @@ namespace ToolsFramework
             offset = 0f;
             if (tool == null || !tool.TryGetValue(toolType, out var val))
                 return false;
+            bool flag = false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
             if (factor != 0f)
+            {
                 factor *= val;
+                flag = true;
+            }
             else
                 factor = 1f;
             offset = toolType.workStatOffset.GetStatValueFromList(stat, 0f);
             if (offset != 0f)
+            {
+                flag = true;
                 offset = val - offset;
-            return true;
+            }
+            return flag;
         }
         public static float GetValue(this Tool tool, ToolType toolType, float fallback = 0f)
         {
