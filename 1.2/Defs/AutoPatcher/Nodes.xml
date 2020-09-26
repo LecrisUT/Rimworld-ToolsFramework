@@ -5,7 +5,6 @@
         <allDrivers>true</allDrivers>
         <baseDriver>JobDriver</baseDriver>
         <driverException>
-            <li>EasyUpgrades.JobDriver_IncreaseQuality</li>
         </driverException>
     </AutoPatcher.BeginDriver>
 
