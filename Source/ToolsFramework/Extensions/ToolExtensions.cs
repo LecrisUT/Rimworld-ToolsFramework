@@ -49,6 +49,14 @@ namespace ToolsFramework
                         return modList[i].value;
             return defaultValue;
         }
+        public static float GetBillGiverValueFromList(this List<BillGiverModifier> modList, ThingDef billGiver, float defaultValue = 0f)
+        {
+            if (modList != null)
+                for (int i = 0; i < modList.Count; i++)
+                    if (modList[i].billGiver == billGiver)
+                        return modList[i].value;
+            return defaultValue;
+        }
         #region ToolDef extenstion
         public static bool TryGetValue(this ToolProperties toolProp, ToolType toolType, out float val, ThingDef stuffDef = null)
         {
@@ -88,20 +96,61 @@ namespace ToolsFramework
             val = tool.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, JobDef job, out float val)
+        public static bool TryGetValue(this Tool tool, JobDef job, out float val, ToolType toolType = null)
         {
             val = 0f;
-            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(toolType, out val))
+            if (tool == null)
+                return false;
+            if (toolType == null && !Dictionaries.jobToolType.TryGetValue(job, out toolType))
+                return false;
+            if (!tool.TryGetValue(toolType, out val))
                 return false;
             var toolProp = tool.ToolProperties;
             val *= toolProp.jobBonus.GetJobValueFromList(job, 1f);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float factor, out float offset)
+        public static bool TryGetValue(this Tool tool, ThingDef billGiver, out float val, ToolType toolType = null)
+        {
+            val = 0f;
+            if (tool == null)
+                return false;
+            if (toolType == null && !Dictionaries.billGiverToolType.TryGetValue(billGiver, out toolType))
+                return false;
+            if (!tool.TryGetValue(toolType, out val))
+                return false;
+            var toolProp = tool.ToolProperties;
+            val *= toolProp.billGiverBonus.GetBillGiverValueFromList(billGiver, 1f);
+            return true;
+        }
+        public static bool TryGetValue(this Tool tool, ThingDef billGiver, StatDef stat, out float factor, out float offset, ToolType toolType = null)
         {
             factor = 1f;
             offset = 0f;
-            if (tool == null || !Dictionaries.jobToolType.TryGetValue(job, out var toolType) || !tool.TryGetValue(job, out var val))
+            if (tool == null)
+                return false;
+            if (toolType == null && !Dictionaries.billGiverToolType.TryGetValue(billGiver, out toolType))
+                return false;
+            if (!tool.TryGetValue(billGiver, out var val, toolType))
+                return false;
+            factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
+            if (factor != 0f)
+                factor *= val;
+            else
+                factor = 1f;
+            offset = toolType.workStatOffset.GetStatValueFromList(stat, 0f);
+            if (offset != 0f)
+                offset = val - offset;
+            return true;
+        }
+        public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float factor, out float offset, ToolType toolType = null)
+        {
+            factor = 1f;
+            offset = 0f;
+            if (tool == null)
+                return false;
+            if (toolType == null && !Dictionaries.jobToolType.TryGetValue(job, out toolType))
+                return false;
+            if (!tool.TryGetValue(job, out var val, toolType))
                 return false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
             if (factor != 0f)

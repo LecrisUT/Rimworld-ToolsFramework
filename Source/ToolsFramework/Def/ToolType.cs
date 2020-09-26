@@ -20,6 +20,7 @@ namespace ToolsFramework
         public List<JobDef> jobException = new List<JobDef>();
         private List<Type> jobDriverList;
         private List<Type> jobDriverException;
+        private List<ThingDef> billGivers;
 
         public bool emergencyTool = false;
 
@@ -27,6 +28,9 @@ namespace ToolsFramework
 
         public void Initialize()
         {
+            if (!billGivers.NullOrEmpty())
+                foreach (var billGiver in billGivers)
+                    Dictionaries.billGiverToolType.Add(billGiver, this);
             if (!jobList.NullOrEmpty())
                 return;
             if (!jobDriverException.NullOrEmpty())

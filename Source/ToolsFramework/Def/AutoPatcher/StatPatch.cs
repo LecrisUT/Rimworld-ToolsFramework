@@ -74,6 +74,31 @@ namespace ToolsFramework.AutoPatcher
         public static float GetStatValueJob(this Pawn pawn, StatDef stat, Job job, bool applyPostProcess = true)
         {
             var val = pawn.GetStatValue(stat, applyPostProcess);
+            // Special case for JobDef DoBill
+            if (job.def == RimWorld.JobDefOf.DoBill)
+            {
+                var billGiver = job.targetA.Thing.def;
+                if (!Dictionaries.billGiverToolType.TryGetValue(billGiver, out var toolType2))
+                {
+#if DEBUG
+                    Log.Message($"Test 1.3: DoBill job not in list {pawn} : {stat} : {billGiver} : {job.RecipeDef} : {val}");
+#endif
+                    return val;
+                }
+                if (pawn.CanUseTools(out var tracker2) && tracker2.toolInUse is Tool tool2)
+                {
+                    tool2.TryGetValue(billGiver, stat, out var fac, out var off, toolType2);
+#if DEBUG
+                    Log.Message($"Test 1.4: Use tool {pawn} : {tool2} : {stat} : {billGiver} : {job.RecipeDef} : {val} -> {(val + off) * fac}");
+#endif
+                    return (val + off) * fac;
+                }
+#if DEBUG
+                Log.Message($"Test 1.5: No tool found {pawn} : {stat} : {billGiver} : {GetStatValueJob_Fallback(val, pawn, stat, job, toolType2, applyPostProcess)}");
+#endif
+                return GetStatValueJob_Fallback(val, pawn, stat, job, toolType2, applyPostProcess);
+            }
+            // Normal jobs
             if (!Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
             {
 #if DEBUG
@@ -83,7 +108,7 @@ namespace ToolsFramework.AutoPatcher
             }
             if (pawn.CanUseTools(out var tracker) && tracker.toolInUse is Tool tool)
             {
-                tool.TryGetValue(job.def, stat, out var fac, out var off);
+                tool.TryGetValue(job.def, stat, out var fac, out var off, toolType);
 #if DEBUG
                 Log.Message($"Test 1.1: Use tool {pawn} : {tool} : {stat} : {job.def} : {val} -> {(val + off) * fac}");
 #endif

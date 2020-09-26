@@ -84,6 +84,7 @@
     <Compile Include="Def\AutoPatcher\WorkGiver_EndNode.cs" />
     <Compile Include="Def\AutoPatcher\ToilPatch.cs" />
     <Compile Include="Def\ToolDef.cs" />
+    <Compile Include="Extensions\BillGiverModifier.cs" />
     <Compile Include="Extensions\RimworldExtensions.cs" />
     <Compile Include="Extensions\ToolExtensions.cs" />
     <Compile Include="Extensions\Job_Extension_Opportunistic.cs" />
@@ -96,6 +97,12 @@
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
     <Compile Include="Harmony\AwesomeInventory_JobGiver_AwesomeInventory_TakeArm.cs" />
+    <Compile Include="Harmony\Toil.cs" />
+    <Compile Include="Harmony\InteractionWorker.cs" />
+    <Compile Include="Harmony\GenRecipe.cs" />
+    <Compile Include="Harmony\JobDriver_DoBill.cs" />
+    <Compile Include="Harmony\JobDriver.cs" />
+    <Compile Include="Harmony\Toils_Recipe.cs" />
     <Compile Include="Harmony\WorkTab_FavouriteManager.cs" />
     <Compile Include="Harmony\WorkTab_PriorityTracker.cs" />
     <Compile Include="Harmony\StatWorker.cs" />

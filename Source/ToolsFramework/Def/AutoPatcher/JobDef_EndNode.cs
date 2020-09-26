@@ -86,6 +86,8 @@ namespace ToolsFramework.AutoPatcher
                 node.DebugMessage.AppendLine("TF_BaseMessage".Translate() + " JobDef <-> ToolType assignment");
                 Dictionaries.jobToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key} : {t.Value}"));
                 node.DebugMessage.AppendLine();
+                Dictionaries.billGiverToolType.Do(t => node.DebugMessage.AppendLine($"{t.Key} : {t.Value}"));
+                node.DebugMessage.AppendLine();
             }
             return true;
         }

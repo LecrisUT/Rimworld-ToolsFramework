@@ -36,10 +36,14 @@ namespace ToolsFramework
         }
         public virtual void Use()
         {
-            if (workTicksDone++ < 0)
+            if (!Settings.degradation || !Tool.def.useHitPoints)
+                return;
+            workTicksDone++;
+            if (workTicksDone > Tool.WorkTicksToDegrade)
+            {
                 workTicksDone = 0;
-            if (Settings.degradation && Tool.def.useHitPoints && workTicksDone % Tool.WorkTicksToDegrade == 0)
                 Degrade(Tool, HoldingPawn);
+            }
         }
         private void Degrade(Thing item, Pawn pawn)
         {

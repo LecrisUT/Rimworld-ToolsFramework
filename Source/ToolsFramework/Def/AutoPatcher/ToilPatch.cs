@@ -163,7 +163,7 @@ namespace ToolsFramework.AutoPatcher
                 return;
             }
 #if DEBUG
-            Log.Message($"Test 3.0: {ToolType.jobToolType.TryGetValue(driver.job.def, out var toolType2)} : {toolType2}");
+            Log.Message($"Test 3.0: {Dictionaries.jobToolType.TryGetValue(driver.job.def, out var toolType2)} : {toolType2}");
 #endif
             if (!pawn.CanUseTools(out var tracker) || !Dictionaries.jobToolType.TryGetValue(driver.job.def, out var toolType))
                 return;
@@ -180,7 +180,7 @@ namespace ToolsFramework.AutoPatcher
             else
                 NoTool(ref toil, pawn, tracker);
         }
-        private static void HasTool(ref Toil toil, Pawn pawn, Tool tool, Pawn_ToolTracker tracker)
+        public static void HasTool(ref Toil toil, Pawn pawn, Tool tool, Pawn_ToolTracker tracker)
         {
             bool equipTool = Settings.equipTool;
             toil.AddPreInitAction(delegate
@@ -212,7 +212,7 @@ namespace ToolsFramework.AutoPatcher
         {
             RimWorld.JobDefOf.DropEquipment,
         };
-        private static void NoTool(ref Toil toil, Pawn pawn, Pawn_ToolTracker tracker)
+        public static void NoTool(ref Toil toil, Pawn pawn, Pawn_ToolTracker tracker)
         {
         }
     }

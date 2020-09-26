@@ -15,7 +15,7 @@ namespace ToolsFramework
             get
             {
                 if (allToolDefs.EnumerableNullOrEmpty())
-                    allToolDefs = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool()).ToHashSet();
+                    allToolDefs = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool() && t.HasModExtension<ToolProperties>()).ToHashSet();
                 return allToolDefs;
             }
         }
@@ -74,8 +74,6 @@ namespace ToolsFramework
             builder.AppendLine("\n\n" + stat.Worker.GetExplanationFull(statReq, stat.toStringNumberSense, value));
             return builder.ToString();
         }
-        /*public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value)
-            => new StatDrawEntry(StatCategoryDefOf.Tools, StatDefOf.ToolEffectivenessFactor, value, StatRequest_For.For(tool, toolType));*/
         public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value, ThingDef stuffDef = null)
             => new StatDrawEntry(StatCategoryDefOf.Tools, toolType.LabelCap, value.ToStringPercent("F0"), ToolStatDrawEntry(tool, toolType, value, stuffDef), 99999,
                 overrideReportTitle: toolType.description, hyperlinks: null, forceUnfinalizedMode: false);

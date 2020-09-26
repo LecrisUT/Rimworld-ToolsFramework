@@ -3,23 +3,21 @@ using Verse;
 
 namespace ToolsFramework
 {
-	public class JobModifier
+	public class BillGiverModifier
 	{
-		public JobDef job;
+		public ThingDef billGiver;
 		public float value;
 		public void LoadDataFromXmlCustom(XmlNode xmlRoot)
 		{
-			DirectXmlCrossRefLoader.RegisterObjectWantsCrossRef(this, "job", xmlRoot.Name);
+			DirectXmlCrossRefLoader.RegisterObjectWantsCrossRef(this, "billGiver", xmlRoot.Name);
 			value = ParseHelper.FromString<float>(xmlRoot.FirstChild.Value);
 		}
 
 		public override string ToString()
 		{
-			if (job == null)
-			{
-				return "(null JobDef)";
-			}
-			return job.defName + "-" + value.ToString();
+			if (billGiver == null)
+				return "(null billGiver)";
+			return billGiver.defName + "-" + value.ToString();
 		}
 	}
 }
