@@ -101,7 +101,6 @@ namespace ToolsFramework.AutoPatcher
         public static bool Transpile(ref List<CodeInstruction> instuctionList, ILGenerator generator, int pos, List<MethodInfo> actions,
             out List<(int pos, int offset)> CIOffsets, out List<(Label label, int pos, int length)> newItems)
         {
-            int offset = 0;
             CIOffsets = new List<(int pos, int offset)>();
             newItems = new List<(Label, int, int)>();
             // insert Toil
@@ -124,12 +123,13 @@ namespace ToolsFramework.AutoPatcher
                 }
                 var insertToil = InsertToilInstructions(toilpos, label, nextLabel);
                 instuctionList.InsertRange(prevToilPos, insertToil);
-                offset = insertToil.Count;
+                var offset = insertToil.Count;
                 CIOffsets.Add((prevToilPos, offset));
                 newItems.Add((label, prevToilPos, insertToil.Count));
+                pos += offset;
             }
             // patch Toil
-            instuctionList.InsertRange(pos + 1 + offset, InsertedInstructions);
+            instuctionList.InsertRange(pos + 1, InsertedInstructions);
             CIOffsets.Add((pos + 1, InsertedInstructions.Count));
             firstToil = false;
             return true;
