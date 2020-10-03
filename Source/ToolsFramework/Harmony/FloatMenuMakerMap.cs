@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using RimWorld;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,8 +16,8 @@ namespace ToolsFramework.Harmony
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
                 return;
             IntVec3 position = IntVec3.FromVector3(clickPos);
-            List<Thing> tools = position.GetThingList(pawn.Map).Where(t => t is Tool).ToList();
-            foreach (Tool tool in tools)
+            var tools = position.GetThingList(pawn.Map).OfType<ThingWithComps>().Where(t => t.IsTool(true)).ToList();
+            foreach (var tool in tools)
             {
                 if (!pawn.CanReach(tool, PathEndMode.ClosestTouch, Danger.Deadly))
                     return;

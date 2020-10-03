@@ -143,12 +143,12 @@ namespace ToolsFramework.AutoPatcher
             bool newToil = false;
             if (!pawn.CanUseTools(out var tracker) || !Dictionaries.jobToolType.TryGetValue(job.def, out var toolType))
                 return false;
-            var tool = tracker.UsedHandler.BestTool[toolType];
-            if (tool == null)
+            var info = tracker.UsedHandler.BestTool[toolType];
+            if (info == null)
                 return false;
             if (Settings.equipDelay)
             {
-                toil = Toils_General.WaitWith(TargetIndex.A, Mathf.CeilToInt(tool.GetStatValueForPawn(StatDefOf.ToolReadinessDelay, pawn)), true, true);
+                toil = Toils_General.WaitWith(TargetIndex.A, Mathf.CeilToInt(info.tool.GetStatValueForPawn(StatDefOf.ToolReadinessDelay, pawn)), true, true);
                 newToil = true;
             }
             return newToil;
@@ -168,44 +168,43 @@ namespace ToolsFramework.AutoPatcher
             if (!pawn.CanUseTools(out var tracker) || !Dictionaries.jobToolType.TryGetValue(driver.job.def, out var toolType))
                 return;
 
-            var tool = tracker.UsedHandler.BestTool[toolType];
+            var info = tracker.UsedHandler.BestTool[toolType];
 #if DEBUG
             var test = new System.Text.StringBuilder($"Test 3.1: {tracker.UsedHandler.BestTool[toolType]}\n");
             foreach (var a in tracker.UsedHandler.BestTool)
                 test.AppendLine($"{a.Key} : {a.Value}");
             Log.Message(test.ToString());
 #endif
-            if (tool != null)
-                HasTool(ref toil, pawn, tool, tracker);
+            if (info != null)
+                HasTool(ref toil, pawn, info, tracker);
             else
                 NoTool(ref toil, pawn, tracker);
         }
-        public static void HasTool(ref Toil toil, Pawn pawn, Tool tool, Pawn_ToolTracker tracker)
+        public static void HasTool(ref Toil toil, Pawn pawn, ToolInfo info, Pawn_ToolTracker tracker)
         {
             bool equipTool = Settings.equipTool;
             toil.AddPreInitAction(delegate
             {
-                tracker.toolInUse = tool;
+                tracker.toolInUse = info.tool;
                 if (equipTool)
-                    pawn.EquipTool(tool);
-                tool.ToolUse.InUse = true;
+                    pawn.EquipTool(info.tool, tracker);
+                info.comp.InUse = true;
             });
             toil.AddPreTickAction(delegate
             {
-                tool.ToolUse.Use();
+                info.comp.Use();
             });
             toil.AddFinishAction(delegate
             {
                 if (equipTool && (!(pawn.jobs.jobQueue.FirstOrDefault() is QueuedJob nextJob) || !dropJobs.Contains(nextJob.job.def)))
-                    pawn.DeequipTool();
-                tool.ToolUse.InUse = false;
+                    pawn.DeequipTool(tracker);
+                info.comp.InUse = false;
                 tracker.toolInUse = null;
-                tracker.memoryEquipment = null;
-                tracker.memoryEquipmentOffHand = null;
+                tracker.memoryEquipment.Clear();
             });
             toil.AddFailCondition(delegate
             {
-                return tool.DestroyedOrNull();
+                return info.tool.DestroyedOrNull();
             });
         }
         public static List<JobDef> dropJobs = new List<JobDef>()

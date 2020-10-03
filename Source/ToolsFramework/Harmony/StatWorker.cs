@@ -1,11 +1,11 @@
 ﻿using HarmonyLib;
 using RimWorld;
-using System.Collections.Generic;
 using System.Text;
 using Verse;
 
 namespace ToolsFramework.Harmony
 {
+    // Temporary solution until swithing to statpart
     [HarmonyPatch(typeof(StatWorker))]
     [HarmonyPatch(nameof(StatWorker.GetExplanationFinalizePart))]
     public static class Patch_StatWorker_GetExplanationFinalizePart
@@ -26,26 +26,26 @@ namespace ToolsFramework.Harmony
                     return;
                 foreach (var toolType in toolTypes)
                 {
-                    var tool = tracker.UsedHandler.BestTool[toolType];
-                    ReportText(ref builder, pawn, ___stat, tool, toolType, finalVal);
+                    var info = tracker.UsedHandler.BestTool[toolType];
+                    ReportText(ref builder, pawn, ___stat, info, toolType, finalVal);
                 }
                 __result += builder.ToString();
             }
         }
-        private static void ReportText(ref StringBuilder stringBuilder, Pawn pawn, StatDef stat, Tool tool, ToolType toolType, float origVal)
+        private static void ReportText(ref StringBuilder stringBuilder, Pawn pawn, StatDef stat, ToolInfo info, ToolType toolType, float origVal)
         {
-            tool.TryGetValue(toolType, stat, out var fac, out var off);
+            info.comp.TryGetValue(toolType, stat, out var fac, out var off);
 #if DEBUG
             stringBuilder.Append("  " + toolType.LabelCap + " : + " + off.ToStringPercent("F2") + " x " + fac.ToStringPercent("F2") + " = " + ((origVal + off) * fac).ToStringPercent("F2"));
 #else
             stringBuilder.Append("  " + toolType.LabelCap + " : = " + ((origVal + off) * fac).ToStringPercent("F2"));
 #endif
-            if (tool == null)
+            if (info == null)
                 stringBuilder.AppendLine(" [" + "NoTool".Translate() + "]");
             else
             {
-                stringBuilder.AppendLine(" [" + tool.LabelCap + "]");
-                var jobBonus = tool.ToolProperties.jobBonus;
+                stringBuilder.AppendLine(" [" + info.tool.LabelCap + "]");
+                var jobBonus = info.comp.CompProp.jobBonus;
                 if (jobBonus.NullOrEmpty())
                     stringBuilder.AppendLine("  [" + "NoJobBonus".Translate() + "]");
                 else

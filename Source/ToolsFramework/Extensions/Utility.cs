@@ -66,7 +66,7 @@ namespace ToolsFramework
                 return toolWorkGivers;
             }
         }
-        public static string ToolStatDrawEntry(Tool tool, ToolType toolType, float value, ThingDef stuffDef = null)
+        public static string ToolStatDrawEntry(ThingWithComps tool, ToolType toolType, float value, ThingDef stuffDef = null)
         {
             var stat = StatDefOf.ToolEffectivenessFactor;
             var builder = new StringBuilder(stat.description);
@@ -74,7 +74,7 @@ namespace ToolsFramework
             builder.AppendLine("\n\n" + stat.Worker.GetExplanationFull(statReq, stat.toStringNumberSense, value));
             return builder.ToString();
         }
-        public static StatDrawEntry ToolTypeDrawEntry(Tool tool, ToolType toolType, float value, ThingDef stuffDef = null)
+        public static StatDrawEntry ToolTypeDrawEntry(ThingWithComps tool, ToolType toolType, float value, ThingDef stuffDef = null)
             => new StatDrawEntry(StatCategoryDefOf.Tools, toolType.LabelCap, value.ToStringPercent("F0"), ToolStatDrawEntry(tool, toolType, value, stuffDef), 99999,
                 overrideReportTitle: toolType.description, hyperlinks: null, forceUnfinalizedMode: false);
 

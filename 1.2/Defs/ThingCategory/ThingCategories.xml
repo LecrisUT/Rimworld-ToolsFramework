@@ -103,6 +103,18 @@
         <parent>CraftingTools</parent>
     </ThingCategoryDef>
 
+    <ThingCategoryDef>
+        <defName>SmeltingTools</defName>
+        <label>smelting tools</label>
+        <parent>CraftingTools</parent>
+    </ThingCategoryDef>
+
+    <ThingCategoryDef>
+        <defName>SmithingTools</defName>
+        <label>smithing tools</label>
+        <parent>CraftingTools</parent>
+    </ThingCategoryDef>
+
     <!-- AnimalTraining tools -->
     <ThingCategoryDef>
         <defName>AnimalTrainingTools</defName>
@@ -114,5 +126,18 @@
         <defName>AnimalTamingTools</defName>
         <label>animal taming tools</label>
         <parent>AnimalTrainingTools</parent>
+    </ThingCategoryDef>
+
+    <!-- Art tools -->
+    <ThingCategoryDef>
+        <defName>ArtTools</defName>
+        <label>art tools</label>
+        <parent>Tools</parent>
+    </ThingCategoryDef>
+
+    <ThingCategoryDef>
+        <defName>SculptingTools</defName>
+        <label>sculpting tools</label>
+        <parent>ArtTools</parent>
     </ThingCategoryDef>
 </Defs>

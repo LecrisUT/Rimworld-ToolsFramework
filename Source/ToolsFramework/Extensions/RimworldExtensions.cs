@@ -1,27 +1,94 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ToolsFramework.Harmony;
+using RimWorld;
 using Verse;
+using Verse.AI;
 
 namespace ToolsFramework
 {
     public static class RimworldExtensions
     {
-        public static bool IsTool(this BuildableDef def)
-            => def is ToolDef || (def is ThingDef tdef && typeof(Tool).IsAssignableFrom(tdef.thingClass));
-        public static bool IsTool(this BuildableDef def, out ToolProperties toolProperties)
+        public static Pawn HoldingPawn(this IThingHolder holder, bool includeCarryTracker = false)
         {
-            toolProperties = null;
-            if (def is ToolDef toolDef)
+            switch (holder)
             {
-                toolProperties = toolDef.ToolProperties;
-                return toolProperties != null;
+                case Pawn_EquipmentTracker eq:
+                    return eq.pawn;
+                case Pawn_InventoryTracker inv:
+                    return inv.pawn;
+                case Pawn_ApparelTracker ap:
+                    return ap.pawn;
+                case Pawn_CarryTracker carry:
+                    return includeCarryTracker ? carry.pawn : null;
+                default:
+                    return null;
             }
-            if (def is ThingDef thingDef && typeof(Tool).IsAssignableFrom(thingDef.thingClass))
+        }
+        public static bool IsTool(this BuildableDef def)
+            => def is ThingDef tdef && tdef.IsTool();
+        public static bool IsTool(this ThingDef def)
+            => typeof(ITool).IsAssignableFrom(def.thingClass) || (!Settings.AllITool && def.HasComp(typeof(ToolComp)));
+        public static bool IsTool(this ThingDef def, out CompProperties_Tool compProp)
+        {
+            compProp = def.GetCompProperties<CompProperties_Tool>();
+            return compProp != null;
+        }
+        public static bool IsTool(this Thing thing, bool addToDictionary = false)
+            => thing is ThingWithComps twc && twc.IsTool(addToDictionary);
+        public static bool IsTool(this Thing thing, out ToolComp comp, bool addToDictionary = false)
+        {
+            if (!(thing is ThingWithComps twc))
             {
-                toolProperties = thingDef.GetModExtension<ToolProperties>();
-                return toolProperties != null;
+                comp = null;
+                return false;
             }
-            return false;
+            return twc.IsTool(out comp, addToDictionary);
+        }
+        public static bool IsTool(this ThingWithComps thing, bool addToDictionary = false)
+            => thing is ITool || (!Settings.AllITool && thing.IsTool(out _, addToDictionary));
+        public static bool IsTool(this ThingWithComps thing, out ToolComp comp, bool addToDictionary = true)
+        {
+            if (thing is ITool tool)
+                comp = tool.ToolComp;
+            else if (Settings.AllITool)
+            {
+                comp = null;
+                return false;
+            }
+            else if (!Dictionaries.ThingTools.TryGetValue(thing, out comp))
+            {
+                comp = thing.TryGetComp<ToolComp>();
+                if (comp != null || addToDictionary)
+                {
+                    if (Dictionaries.ThingTools.Count == Settings.DictionaryCache)
+                        Dictionaries.ThingTools.Clear();
+                    Dictionaries.ThingTools.Add(thing, comp);
+                }
+            }
+            return comp != null;
+        }
+        public static bool ToolIsForbidden(this ThingWithComps tool, Pawn pawn, ThingFilter filter)
+            => tool.IsForbidden(pawn) || !filter.Allows(tool);
+        public static bool ToolIsForbidden(this ThingWithComps tool, Pawn pawn, ReservationManager reservation, Faction faction = null)
+            => tool.IsForbidden(pawn) || reservation.IsReservedByAnyoneOf(tool, faction ?? pawn.Faction);
+        public static bool ToolIsForbidden(this ThingWithComps tool, Pawn pawn, ThingFilter filter, ReservationManager reservation, Faction faction = null)
+            => tool.IsForbidden(pawn) || !filter.Allows(tool) || reservation.IsReservedByAnyoneOf(tool, faction ?? pawn.Faction);
+        public static CompProperties_Tool ToolCompProp(this ThingDef tdef)
+            => tdef.GetCompProperties<CompProperties_Tool>();
+        public static CompProperties_Tool ToolCompProp(this ThingWithComps thing, bool addToDictionary = true)
+            => thing.ToolComp(addToDictionary)?.CompProp;
+        public static IEnumerable<ToolType> ToolTypes(this ThingWithComps thing, bool addToDictionary = true)
+            => thing.ToolComp(addToDictionary)?.CompProp.ToolTypes;
+        public static ToolComp ToolComp(this ThingWithComps thing, bool addToDictionary = true)
+        {
+            if (thing is ITool tool)
+                return tool.ToolComp;
+            if (Settings.AllITool)
+                return null;
+            if (thing.IsTool(out var comp, addToDictionary))
+                return comp;
+            return null;
         }
         public static bool TryGetMapToolTracker(this Map map, out Map_ToolTracker tracker)
         {
@@ -40,9 +107,9 @@ namespace ToolsFramework
             }
             return tracker;
         }
-        public static bool CanUseTools(this Pawn pawn)
-            => pawn.CanUseTools(out _);
-        public static bool CanUseTools(this Pawn pawn, out Pawn_ToolTracker tracker)
+        public static bool CanUseTools(this Pawn pawn, bool addToDictionary = true)
+            => pawn.CanUseTools(out _, addToDictionary);
+        public static bool CanUseTools(this Pawn pawn, out Pawn_ToolTracker tracker, bool addToDictionary = true)
         {
             tracker = null;
             if (pawn == null)
@@ -50,84 +117,107 @@ namespace ToolsFramework
             if (!Dictionaries.PawnToolTrackers.TryGetValue(pawn, out tracker))
             {
                 tracker = pawn.GetComp<Pawn_ToolTracker>();
-                if (tracker != null)
+                if (tracker != null || addToDictionary)
+                {
+                    if (Dictionaries.PawnToolTrackers.Count == Settings.DictionaryCache)
+                        Dictionaries.PawnToolTrackers.Clear();
                     Dictionaries.PawnToolTrackers.Add(pawn, tracker);
+                }
             }
             return tracker != null;
         }
-        public static void EquipTool(this Pawn pawn)
+        public static void EquipTool(this Pawn pawn, Pawn_ToolTracker tracker)
         {
-            if (pawn.CanUseTools(out var tracker))
-                pawn.EquipTool(tracker.toolInUse);
+            if (tracker == null && !pawn.CanUseTools(out tracker))
+                return;
+            pawn.EquipTool(tracker.toolInUse, tracker);
         }
-        public static void EquipTool(this Pawn pawn, Tool tool)
+        public static void EquipTool(this Pawn pawn, ThingWithComps tool, Pawn_ToolTracker tracker = null)
         {
-            if (!pawn.CanUseTools(out var tracker) || !tracker.UsedHandler.HeldTools.Contains(tool))
+            if (tracker == null && !pawn.CanUseTools(out tracker))
+                return;
+            if (!tracker.UsedHandler.HeldTools.Contains(tool))
                 return;
             bool equipTool = true;
-            var equipment = pawn.equipment;
-            tracker.memoryEquipment = equipment.Primary;
-            // tracker.transfering = true;
-            if (equipment.TryGetOffHandEquipment(out var offEquipment))
+            if (tool is Apparel ap)
             {
-                tracker.memoryEquipmentOffHand = offEquipment;
-                if (tool != offEquipment)
-                    equipment.GetDirectlyHeldThings().TryTransferToContainer(offEquipment, pawn.inventory.innerContainer, false);
+                var apparel = pawn.apparel;
+                if (apparel.Contains(ap))
+                    tracker.memoryEquipment.Add(ap);
                 else
-                    equipTool = false;
+                {
+                    var body = pawn.RaceProps.body;
+                    var apThingOwner = apparel.GetDirectlyHeldThings();
+                    foreach (var otherAp in apparel.WornApparel.ToList())
+                        if (!ApparelUtility.CanWearTogether(ap.def, otherAp.def, body))
+                        {
+                            tracker.memoryEquipment.Add(otherAp);
+                            apThingOwner.TryTransferToContainer(otherAp, pawn.inventory.innerContainer);
+                        }
+                    pawn.inventory.innerContainer.TryTransferToContainer(ap, apThingOwner);
+                }
             }
-            if (tracker.memoryEquipment != null)
+            else
             {
-                if (tool != tracker.memoryEquipment)
-                    equipment.GetDirectlyHeldThings().TryTransferToContainer(tracker.memoryEquipment, pawn.inventory.innerContainer, false);
-                else
-                    equipTool = false;
+                var equipment = pawn.equipment;
+                var primary = equipment.Primary;
+                if (primary != null)
+                {
+                    tracker.memoryEquipment.Add(primary);
+                    if (equipment.TryGetOffHandEquipment(out var offEquipment))
+                    {
+                        tracker.memoryEquipment.Add(offEquipment);
+                        if (tool != offEquipment)
+                            equipment.GetDirectlyHeldThings().TryTransferToContainer(offEquipment, pawn.inventory.innerContainer, false);
+                        else
+                            equipTool = false;
+                    }
+                    if (primary != tool)
+                        equipment.GetDirectlyHeldThings().TryTransferToContainer(primary, pawn.inventory.innerContainer, false);
+                    else
+                        equipTool = false;
+                }
+                if (equipTool)
+                    pawn.inventory.innerContainer.TryTransferToContainer(tool, equipment.GetDirectlyHeldThings());
             }
-            if (equipTool)
-                pawn.inventory.innerContainer.TryTransferToContainer(tool, equipment.GetDirectlyHeldThings());
-            // tracker.transfering = false;
         }
-        public static void DeequipTool(this Pawn pawn)
+        public static void DeequipTool(this Pawn pawn, Pawn_ToolTracker tracker = null)
         {
-            if (!pawn.CanUseTools(out var tracker))
+            if (tracker == null && !pawn.CanUseTools(out tracker))
                 return;
             var tool = tracker.toolInUse;
-            var equipment = pawn.equipment;
-            var mainEquipment = tracker.memoryEquipment;
-            var offhandEquipment = tracker.memoryEquipmentOffHand;
-            // tracker.transfering = true;
-            if (tracker.memoryEquipment != tool && tracker.memoryEquipmentOffHand != tool)
+            if (tool is Apparel ap)
             {
-                if (tracker.UsedHandler.HeldTools.Contains(tool))
+                var apparel = pawn.apparel;
+                var apThingOwner = apparel.GetDirectlyHeldThings();
+                if (!ap.Destroyed && !tracker.memoryEquipment.Contains(ap))
+                    apThingOwner.TryTransferToContainer(ap, pawn.inventory.innerContainer);
+                foreach (var eq in tracker.memoryEquipment)
+                    pawn.inventory.innerContainer.TryTransferToContainer(eq, apThingOwner);
+            }
+            else
+            {
+                var equipment = pawn.equipment;
+                if (!tool.DestroyedOrNull() && !tracker.memoryEquipment.Contains(tool))
                     equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
-                if (mainEquipment != null && pawn.inventory.Contains(mainEquipment))
-                    pawn.inventory.innerContainer.TryTransferToContainer(mainEquipment, equipment.GetDirectlyHeldThings());
-
-            }
-            if (offhandEquipment != null)
-            {
-                if (!equipment.Contains(offhandEquipment))
+                foreach (var eq in tracker.memoryEquipment)
                 {
-                    pawn.inventory.innerContainer.TryTransferToContainer(offhandEquipment, equipment.GetDirectlyHeldThings());
-                    equipment.AddOffHandEquipment(offhandEquipment);
-                }
-                else
-                {
-                    pawn.inventory.innerContainer.TryTransferToContainer(mainEquipment, equipment.GetDirectlyHeldThings());
-                    equipment.AddOffHandEquipment(mainEquipment);
+                    bool flag = equipment.Primary != null;
+                    pawn.inventory.innerContainer.TryTransferToContainer(eq, equipment.GetDirectlyHeldThings());
+                    if (flag)
+                        equipment.AddOffHandEquipment(eq);
                 }
             }
-            // tracker.transfering = false;
         }
         public static bool HasDamagedTools(this Pawn pawn)
         {
             if (pawn == null || !pawn.CanUseTools(out var tracker))
                 return false;
-            if (tracker.UsedHandler.UsedTools?.Any(t => t.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold) ?? false)
+            if (tracker.UsedHandler.UsedToolInfos?.Any(t => t.comp.LifeSpan <= Settings.alertToolNeedsReplacing_Treshold) ?? false)
                 return true;
             return false;
         }
-        public static void DropTool(this Pawn pawn, Tool tool)
+        public static void DropTool(this Pawn pawn, ThingWithComps tool)
         {
             if (pawn.inventory.innerContainer.Contains(tool))
                 pawn.inventory.innerContainer.TryDrop(tool, ThingPlaceMode.Direct, out _);

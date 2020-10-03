@@ -69,7 +69,7 @@ namespace ToolsFramework
                 var assingment = MakeNewToolAssignment();
                 assingment.label = category.LabelCap;
                 assingment.filter.SetDisallowAll();
-                foreach (var tDef in Utility.AllToolDefs.Where(t => t.GetModExtension<ToolProperties>()?.ToolTypes.Any(tt => tt.defaultToolAssignmentTags.Contains(category)) ?? false))
+                foreach (var tDef in Utility.AllToolDefs.Where(t => t.ToolCompProp().ToolTypes.Any(tt => tt.defaultToolAssignmentTags.Contains(category))))
                         assingment.filter.SetAllow(tDef, true);
             }
 

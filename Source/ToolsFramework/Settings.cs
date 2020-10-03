@@ -30,6 +30,9 @@ namespace ToolsFramework
         public static bool opportunisticTakeTool = true;
         public static bool opportunisticTakeTool_calcPath = true;
 
+        public static int DictionaryCache = 3000;
+        public static bool AllITool = false;
+
         private Vector2 scrollPosition = Vector2.zero;
         public void DoWindowContents(Rect wrect)
         {

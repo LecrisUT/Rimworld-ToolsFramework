@@ -33,6 +33,15 @@ namespace ToolsFramework
             BaseMod.thisMod.GetSettings<Settings>();
             Dictionaries.StatPartSettings.SetOrAdd(StatDefOf.ToolReadinessDelay, ToolsFramework.Settings.equipDelayFactor);
             Dictionaries.StatPartSettings.SetOrAdd(StatDefOf.ToolWearFactor, ToolsFramework.Settings.degradationFactor);
+            ToolsFramework.Settings.AllITool = false;
+            var unoptToolDef = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool() && !typeof(ITool).IsAssignableFrom(t.thingClass));
+            if (unoptToolDef.Any())
+            {
+                ToolsFramework.Settings.AllITool = false;
+                Log.Warning("TF_BaseMessage" + "TF_Warning_Unoptimized".Translate(unoptToolDef.ToStringSafeEnumerable()));
+            }
+            else
+                ToolsFramework.Settings.AllITool = true;
         }
     }
 }

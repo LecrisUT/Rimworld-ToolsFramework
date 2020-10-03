@@ -241,6 +241,37 @@
             <li>StoneCuttingTools</li>
         </defaultToolAssignmentTags>
     </ToolsFramework.ToolType>
+    
+    <ToolsFramework.ToolType>
+        <defName>SmeltingTool</defName>
+        <description>Tool affecting smelting speed.</description>
+        <label>smelting tool</label>
+        <workStatFactors>
+            <GeneralLaborSpeed>1.0</GeneralLaborSpeed>
+        </workStatFactors>
+        <billGivers>
+            <li>ElectricSmelter</li>
+        </billGivers>
+        <defaultToolAssignmentTags>
+            <li>SmeltingTools</li>
+        </defaultToolAssignmentTags>
+    </ToolsFramework.ToolType>
+    
+    <ToolsFramework.ToolType>
+        <defName>SmithingTool</defName>
+        <description>Tool affecting smithing speed.</description>
+        <label>smithing tool</label>
+        <workStatFactors>
+            <GeneralLaborSpeed>1.0</GeneralLaborSpeed>
+        </workStatFactors>
+        <billGivers>
+            <li>FueledSmithy</li>
+            <li>ElectricSmithy</li>
+        </billGivers>
+        <defaultToolAssignmentTags>
+            <li>SmithingTools</li>
+        </defaultToolAssignmentTags>
+    </ToolsFramework.ToolType>
 
     <!-- AnimalTraining tools -->
     <ToolsFramework.ToolType>
@@ -270,6 +301,22 @@
         </jobDriverList>
         <defaultToolAssignmentTags>
             <li>AnimalTamingTools</li>
+        </defaultToolAssignmentTags>
+    </ToolsFramework.ToolType>
+
+    <!-- Art tools -->
+    <ToolsFramework.ToolType>
+        <defName>SculptingTool</defName>
+        <description>Tool affecting sculpting speed.</description>
+        <label>sculpting tool</label>
+        <workStatFactors>
+            <GeneralLaborSpeed>1.0</GeneralLaborSpeed>
+        </workStatFactors>
+        <billGivers>
+            <li>TableSculpting</li>
+        </billGivers>
+        <defaultToolAssignmentTags>
+            <li>SculptingTools</li>
         </defaultToolAssignmentTags>
     </ToolsFramework.ToolType>
 </Defs>

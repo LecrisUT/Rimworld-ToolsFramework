@@ -52,7 +52,7 @@ namespace ToolsFramework
                 TooltipHandler.TipRegion(rect4, new TipSignal(delegate ()
                 {
                     string text = "ForcedTools".Translate() + ":\n";
-                    foreach (Thing tool in tracker.forcedHandler.ForcedTools)
+                    foreach (var tool in tracker.forcedHandler.ForcedTools)
                     {
                         text = text + "\n   " + tool.LabelCap;
                     }

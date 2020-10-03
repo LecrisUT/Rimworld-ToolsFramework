@@ -12,8 +12,7 @@ namespace ToolsFramework
         }
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            if (!(TargetThingA is Tool tool))
-                yield break;
+            var tool = TargetThingA as ThingWithComps;
             pawn.DropTool(tool);
             foreach (var toil in base.MakeNewToils())
                 yield return toil;

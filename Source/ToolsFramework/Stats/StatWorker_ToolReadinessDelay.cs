@@ -7,25 +7,25 @@ namespace ToolsFramework
     public class StatWorker_ToolReadinessDelay : StatWorker
     {
         public override bool ShouldShowFor(StatRequest req) =>
-            Settings.equipDelay && req.BuildableDef.IsTool();
+            Settings.equipDelay && (req.HasThing ? req.Thing.IsTool() : req.BuildableDef.IsTool());
 
         public override void FinalizeValue(StatRequest req, ref float val, bool applyPostProcess)
         {
-            val *= LoadOutEffect((Tool)req.Thing);
+            val *= LoadOutEffect(req.Thing);
             base.FinalizeValue(req, ref val, applyPostProcess);
         }
         public override string GetExplanationFinalizePart(StatRequest req, ToStringNumberSense numberSense, float finalVal)
         {
             var builder = new StringBuilder();
             builder.AppendLine($"{"TF_LoadoutToolReadiness".Translate()}: " +
-                $"{LoadOutEffect((Tool)req.Thing).ToStringByStyle(ToStringStyle.FloatTwo, ToStringNumberSense.Factor)}");
+                $"{LoadOutEffect(req.Thing).ToStringByStyle(ToStringStyle.FloatTwo, ToStringNumberSense.Factor)}");
             builder.AppendLine();
             builder.AppendLine(base.GetExplanationFinalizePart(req, numberSense, finalVal));
             return builder.ToString();
         }
-        private float LoadOutEffect(Tool tool)
+        private float LoadOutEffect(Thing tool)
         {
-            if (tool == null || !(tool.HoldingPawn is Pawn pawn) || !pawn.CanUseTools(out var tracker))
+            if (tool == null || !(tool.ParentHolder.HoldingPawn() is Pawn pawn) || !pawn.CanUseTools(out var tracker))
                 return 1f;
             var count = tracker.UsedHandler.HeldToolsCount;
             return Settings.ToolReadinessCurve.Evaluate(count);

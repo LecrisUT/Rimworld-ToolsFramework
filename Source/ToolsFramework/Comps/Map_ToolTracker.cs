@@ -15,9 +15,10 @@ namespace ToolsFramework
             nextUpdateUseableToolsTick = Find.TickManager.TicksGame;
         }
         public bool Cached_BestTools = false;
-        private HashSet<Tool> storedTools = new HashSet<Tool>();
-        public IEnumerable<Tool> StoredTools => storedTools;
-        public HashSet<Tool> StoredToolsList
+        private HashSet<ToolInfo> storedTools = new HashSet<ToolInfo>();
+        public IEnumerable<ThingWithComps> StoredTools => StoredToolInfos.Select(t => t.tool);
+        public IEnumerable<ToolInfo> StoredToolInfos => storedTools;
+        public HashSet<ToolInfo> StoredToolsList
         {
             get
             {
@@ -25,9 +26,10 @@ namespace ToolsFramework
                 return storedTools;
             }
         }
-        private HashSet<Tool> useableTools = new HashSet<Tool>();
-        public IEnumerable<Tool> UseableTools => useableTools;
-        public HashSet<Tool> UseableToolsList
+        private HashSet<ToolInfo> useableTools = new HashSet<ToolInfo>();
+        public IEnumerable<ThingWithComps> UseableTools => UseableToolInfos.Select(t => t.tool);
+        public IEnumerable<ToolInfo> UseableToolInfos => useableTools;
+        public HashSet<ToolInfo> UseableToolsList
         {
             get
             {
@@ -36,8 +38,8 @@ namespace ToolsFramework
             }
         }
 
-        private Dictionary<ToolType, Tool> bestTools;
-        private Dictionary<ToolType, Tool> BestTools
+        private Dictionary<ToolType, ToolInfo> bestTools;
+        private Dictionary<ToolType, ToolInfo> BestTools
         {
             get
             {
@@ -46,8 +48,8 @@ namespace ToolsFramework
                 return bestTools;
             }
         }
-        private Dictionary<ThingDef, Tool> bestToolThings;
-        private Dictionary<ThingDef, Tool> BestToolThings
+        private Dictionary<ThingDef, ToolInfo> bestToolThings;
+        private Dictionary<ThingDef, ToolInfo> BestToolThings
         {
             get
             {
@@ -56,7 +58,7 @@ namespace ToolsFramework
                 return bestToolThings;
             }
         }
-        private Dictionary<ThingDef, List<Tool>> storedToolThings;
+        private Dictionary<ThingDef, List<ToolInfo>> storedToolThings;
         public int nextUpdateStoredToolsTick = 0;
         public int nextUpdateUseableToolsTick = 0;
         public override void MapComponentTick()
@@ -75,7 +77,7 @@ namespace ToolsFramework
             var faction = Find.FactionManager.OfPlayer;
             var reservation = map.reservationManager;
             var oldList = useableTools;
-            useableTools = storedTools.Where(t => !t.IsForbidden(faction) && !reservation.IsReservedByAnyoneOf(t, faction)).ToHashSet() ?? new HashSet<Tool>();
+            useableTools = storedTools.Where(t => !t.tool.IsForbidden(faction) && !reservation.IsReservedByAnyoneOf(t.tool, faction)).ToHashSet() ?? new HashSet<ToolInfo>();
             if (oldList.SetEquals(useableTools))
                 return;
             Cached_BestTools = false;
@@ -84,50 +86,51 @@ namespace ToolsFramework
         {
             nextUpdateStoredToolsTick = Find.TickManager.TicksGame + Settings.mapTrackerDelay_StoredTools;
             var oldList = storedTools;
-            storedTools = map.listerThings.ThingsInGroup(ThingRequestGroup.HaulableAlways).OfType<Tool>()?.Where(t => t.IsInAnyStorage()).ToHashSet() ?? new HashSet<Tool>();
+            storedTools = new HashSet<ToolInfo>();
+            var things = map.listerThings.ThingsInGroup(ThingRequestGroup.HaulableAlways).OfType<ThingWithComps>()?.Where(t => t.IsInAnyStorage());
+            foreach (var thing in things)
+                if (thing.IsTool(out var comp, false))
+                    storedTools.Add(new ToolInfo(thing, comp));
             if (oldList.SetEquals(storedTools))
                 return;
-            storedToolThings = Utility.AllToolDefs.ToDictionary(t => t, t => new List<Tool>());
-            foreach (var tool in storedTools)
-                storedToolThings[tool.def].Add(tool);
+            storedToolThings = Utility.AllToolDefs.ToDictionary(t => t, t => new List<ToolInfo>());
+            foreach (var info in storedTools)
+                storedToolThings[info.tool.def].Add(info);
             UpdateUseableTools();
         }
         public void FindBestTools()
         {
             if (bestTools == null)
-                bestTools = DefDatabase<ToolType>.AllDefs.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
-            bestToolThings = Utility.AllToolDefs.ToDictionary<ThingDef, ThingDef, Tool>(t => t, t => null);
+                bestTools = DefDatabase<ToolType>.AllDefs.ToDictionary<ToolType, ToolType, ToolInfo>(t => t, t => null);
+            bestToolThings = Utility.AllToolDefs.ToDictionary<ThingDef, ThingDef, ToolInfo>(t => t, t => null);
             foreach (var toolType in DefDatabase<ToolType>.AllDefs)
                 FindBestTool(toolType);
-            foreach (var tool in useableTools)
+            foreach (var info in useableTools)
             {
-                var toolDef = tool.def;
-                if (tool.TotalScore > (bestToolThings[toolDef]?.TotalScore ?? 0f))
-                    bestToolThings[toolDef] = tool;
+                var toolDef = info.tool.def;
+                if (info.comp.TotalScore > (bestToolThings[toolDef]?.comp.TotalScore ?? 0f))
+                    bestToolThings[toolDef] = info;
             }
             Cached_BestTools = true;
         }
         public void FindBestTool(ToolType toolType)
+            => bestTools[toolType] = privateBestTool(toolType);
+        private ToolInfo privateBestTool(ToolType toolType)
         {
-            var tool = privateBestTool(toolType);
-            bestTools[toolType] = tool;
-        }
-        private Tool privateBestTool(ToolType toolType)
-        {
-            Tool tool = null;
+            ToolInfo info = null;
             float val = 0f;
-            foreach (var currTool in useableTools)
+            foreach (var currInfo in useableTools)
             {
-                float currVal = currTool[toolType];
-                if (currTool.TryGetValue(toolType, out var baseVal) && baseVal > 1f && currVal > val)
+                float currVal = currInfo.comp[toolType];
+                if (currInfo.comp.TryGetValue(toolType, out var baseVal) && baseVal > 1f && currVal > val)
                 {
-                    tool = currTool;
+                    info = currInfo;
                     val = currVal;
                 }
             }
-            return tool;
+            return info;
         }
-        public bool ValidateTool(Tool tool)
+        public bool ValidateTool(ThingWithComps tool)
         {
             if (!tool.IsInAnyStorage())
             {
@@ -142,56 +145,74 @@ namespace ToolsFramework
             }
             return true;
         }
-        public Tool BestTool(ToolType toolType)
+        public ToolInfo BestTool(ToolType toolType)
         {
-            var tool = BestTools[toolType];
-            if (tool == null)
+            var info = BestTools[toolType];
+            if (info == null)
                 return null;
-            if (!ValidateTool(tool))
-                tool = BestTool(toolType);
-            return tool;
+            if (!ValidateTool(info.tool))
+                info = BestTool(toolType);
+            return info;
         }
-        public Tool BestTool(ThingDef def)
+        public ToolInfo BestToolInfo(ThingDef def)
         {
-            var tool = BestToolThings[def];
-            if (tool == null)
+            var info = BestToolThings[def];
+            if (info == null)
                 return null;
-            if (!ValidateTool(tool))
-                tool = BestTool(def);
-            return tool;
+            if (!ValidateTool(info.tool))
+                info = BestToolInfo(def);
+            return info;
         }
-        public IEnumerable<Tool> StoredToolThings(ThingDef def)
+        public ThingWithComps BestTool(ThingDef def) => BestToolInfo(def)?.tool;
+        public IEnumerable<ToolInfo> StoredToolThingInfos(ThingDef def)
         {
             if (storedToolThings == null)
                 UpdateStoredTools();
             var list = storedToolThings[def];
             if (list.NullOrEmpty())
                 return list;
-            if (list.Any(t => !t.IsInAnyStorage()))
+            if (list.Any(t => !t.tool.IsInAnyStorage()))
             {
                 UpdateStoredTools();
-                return StoredToolThings(def);
+                return StoredToolThingInfos(def);
             }
             return list;
         }
-        public Tool ClosestTool(ToolType toolType, IntVec3 pos, Pawn pawn = null)
+        public IEnumerable<ThingWithComps> StoredToolThings(ThingDef def)
+            => StoredToolThingInfos(def)?.Select(t => t.tool);
+        public ToolInfo ClosestToolInfo(ToolType toolType, IntVec3 pos, Pawn pawn = null)
         {
             var reservation = pawn?.MapHeld.reservationManager;
             var faction = pawn?.Faction;
-            Tool tool = null;
+            var flag = pawn.CanUseTools(out var tracker);
+            ThingFilter assignmentFilter = null;
+            if (flag)
+                assignmentFilter = tracker.ToolAssignment.filter;
+            ToolInfo info = null;
             float bestDist = float.MaxValue;
-            foreach (var currTool in UseableTools)
+            foreach (var currInfo in UseableToolInfos)
             {
-                if (currTool.IsForbidden(pawn) || (reservation?.IsReservedByAnyoneOf(currTool, faction) ?? false) || !currTool.TryGetValue(toolType, out float val) || val < 1f || !Distance(currTool, pos, out float dist))
+                if (pawn != null)
+                {
+                    if (flag)
+                    {
+                        if (currInfo.tool.ToolIsForbidden(pawn, assignmentFilter, reservation, faction))
+                            continue;
+                    }
+                    else if (currInfo.tool.ToolIsForbidden(pawn, reservation, faction))
+                        continue;
+                }
+                if (!currInfo.comp.TryGetValue(toolType, out float val) || val < 1f || !Distance(currInfo.tool, pos, out float dist))
                     continue;
                 if (dist < bestDist)
                 {
                     bestDist = dist;
-                    tool = currTool;
+                    info = currInfo;
                 }
             }
-            return tool;
+            return info;
         }
+        public ThingWithComps ClosestTool(ToolType toolType, IntVec3 pos, Pawn pawn = null) => ClosestToolInfo(toolType, pos, pawn)?.tool;
         private static bool Distance(Thing target, IntVec3 source, out float dist)
         {
             dist = float.MaxValue;

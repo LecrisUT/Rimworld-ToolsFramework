@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Verse;
 
@@ -14,9 +13,10 @@ namespace ToolsFramework
         private Pawn pawn;
         public bool dirtyCache = true;
 
-        private Dictionary<ToolType, Tool> bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
-        public IEnumerable<Tool> UsedTools => BestTool.Values.Where(t => !t.DestroyedOrNull());
-        public Dictionary<ToolType, Tool> BestTool
+        private Dictionary<ToolType, ToolInfo> bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, ToolInfo>(t => t, t => null);
+        public IEnumerable<ThingWithComps> UsedTools => UsedToolInfos.Select(t => t.tool);
+        public IEnumerable<ToolInfo> UsedToolInfos => BestTool.Values.Where(t => t != null && !t.tool.DestroyedOrNull());
+        public Dictionary<ToolType, ToolInfo> BestTool
         {
             get
             {
@@ -25,8 +25,8 @@ namespace ToolsFramework
                 return bestTool;
             }
         }
-        private List<Tool> heldTools;
-        public List<Tool> HeldToolsList
+        private List<ToolInfo> heldTools;
+        public List<ToolInfo> HeldToolsList
         {
             get
             {
@@ -36,7 +36,16 @@ namespace ToolsFramework
                 return heldTools;
             }
         }
-        public IEnumerable<Tool> HeldTools
+        public IEnumerable<ThingWithComps> HeldTools
+        {
+            get
+            {
+                if (heldTools == null)
+                    UpdateHeldTools();
+                return heldTools.Select(t => t.tool);
+            }
+        }
+        public IEnumerable<ToolInfo> HeldToolInfos
         {
             get
             {
@@ -56,27 +65,33 @@ namespace ToolsFramework
         }
         private void Update()
         {
-            bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, Tool>(t => t, t => null);
-            foreach (var currTool in HeldTools)
-                foreach (var toolType in currTool.ToolTypes)
+            bestTool = ToolType.allToolTypes.ToDictionary<ToolType, ToolType, ToolInfo>(t => t, t => null);
+            foreach (var currInfo in HeldToolInfos)
+            {
+                foreach (var toolType in currInfo.comp.ToolTypes)
                 {
-                    var currVal = currTool.GetValue(toolType);
-                    if (currVal > 1f && currVal > bestTool[toolType].GetValue(toolType, 0f))
-                        bestTool[toolType] = currTool;
+                    var currVal = currInfo.comp.GetValue(toolType);
+                    if (currVal > 1f)
+                    {
+                        var info = bestTool[toolType];
+                        if (currVal > (info?.comp.GetValue(toolType, 0f) ?? 0f))
+                            bestTool[toolType] = currInfo;
+                    }
                 }
+            }
             dirtyCache = false;
         }
         public void UpdateHeldTools()
         {
-            heldTools = new List<Tool>();
-            var list = pawn.equipment?.AllEquipmentListForReading.Where(t => t is Tool);
-            if (!list.EnumerableNullOrEmpty())
-                foreach (var t in list)
-                    heldTools.Add((Tool)t);
-            var list2 = pawn.inventory.innerContainer.Where(t => t is Tool);
-            if (!list2.EnumerableNullOrEmpty())
-                foreach (var t in list2)
-                    heldTools.Add((Tool)t);
+            heldTools = new List<ToolInfo>();
+            var equipment = pawn.equipment?.AllEquipmentListForReading;
+            if (!equipment.NullOrEmpty())
+                foreach (var thing in equipment)
+                    if (thing.IsTool(out var comp, true))
+                        heldTools.Add(new ToolInfo(thing, comp));
+            foreach (var thing in pawn.inventory.innerContainer.OfType<ThingWithComps>())
+                if (thing.IsTool(out var comp, false))
+                    heldTools.Add(new ToolInfo(thing, comp));
         }
     }
 }

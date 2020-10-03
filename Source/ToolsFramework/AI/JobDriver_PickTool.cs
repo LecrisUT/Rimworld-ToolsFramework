@@ -1,5 +1,6 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
+using Verse;
 using Verse.AI;
 
 namespace ToolsFramework
@@ -8,13 +9,13 @@ namespace ToolsFramework
     {
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            if (!(TargetThingA is Tool tool))
+            if (!(TargetThingA is ThingWithComps thing))
                 yield break;
-            AddFailCondition(() => tool.IsForbidden(pawn));
+            AddFailCondition(() => thing.IsForbidden(pawn));
             foreach (var toil in base.MakeNewToils())
                 yield return toil;
             if (pawn.CanUseTools(out var tracker) && job.playerForced)
-                tracker.forcedHandler.SetForced(tool, true);
+                tracker.forcedHandler.SetForced(thing, true, false);
         }
     }
 }

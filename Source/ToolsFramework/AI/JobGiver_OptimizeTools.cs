@@ -24,52 +24,53 @@ namespace ToolsFramework
             var heldTools = tracker.UsedHandler.HeldTools.ToList();
             var bestTools = tracker.UsedHandler.BestTool;
             var neededToolTypes = tracker.NecessaryToolTypes;
-            var neededTools = new List<Tool>();
+            var neededTools = new List<ThingWithComps>();
             foreach (var toolType in neededToolTypes)
             {
-                var tool = bestTools[toolType];
-                if (tool != null)
-                    neededTools.Add(tool);
+                var info = bestTools[toolType];
+                if (info != null)
+                    neededTools.Add(info.tool);
             }
             neededTools.RemoveDuplicates();
             var extraTools = heldTools.Except(neededTools).ToList();
             // Get better tools
-            var toolsToGet = new List<Tool>();
+            var toolsToGet = new List<ThingWithComps>();
             var reservation = pawn.MapHeld.reservationManager;
             var faction = pawn.Faction;
             var assignmentFilter = tracker.ToolAssignment.filter;
             foreach (var toolType in neededToolTypes)
             {
-                var mapTool = mapTracker.BestTool(toolType);
-                if (mapTool == null)
+                var mapToolInfo = mapTracker.BestTool(toolType);
+                if (mapToolInfo == null)
                     continue;
-                if (mapTool.IsForbidden(pawn) || reservation.IsReservedByAnyoneOf(mapTool, faction))
+                var mapTool = mapToolInfo.tool;
+                if (mapTool.ToolIsForbidden(pawn, assignmentFilter, reservation, faction))
                 {
                     mapTool = null;
                     foreach (var thingDef in Utility.AllToolDefs)
                     {
-                        var tool = mapTracker.BestTool(thingDef);
-                        if (tool == null)
+                        var toolInfo = mapTracker.BestToolInfo(thingDef);
+                        if (toolInfo == null)
                             continue;
-                        if (assignmentFilter.Allows(thingDef) && !reservation.IsReservedByAnyoneOf(tool, faction) && thingDef.IsTool(out var prop) && prop.ToolTypes.Contains(toolType))
+                        if (assignmentFilter.Allows(thingDef) && !reservation.IsReservedByAnyoneOf(toolInfo.tool, faction) && thingDef.IsTool(out var compProp) && compProp.ToolTypes.Contains(toolType))
                         {
-                            if (!tool.IsForbidden(pawn))
-                                mapTool = tool;
+                            if (!toolInfo.tool.IsForbidden(pawn))
+                                mapToolInfo = toolInfo;
                             else
-                                foreach (var otherTool in mapTracker.StoredToolThings(thingDef))
-                                    if (!otherTool.IsForbidden(pawn) && otherTool.GetValue(toolType) > mapTool.GetValue(toolType, 0f))
-                                        mapTool = otherTool;
+                                foreach (var otherInfo in mapTracker.StoredToolThingInfos(thingDef))
+                                    if (!otherInfo.tool.IsForbidden(pawn) && otherInfo.comp.GetValue(toolType) > mapToolInfo.comp.GetValue(toolType, 0f))
+                                        mapToolInfo = otherInfo;
                         }
                     }
-                    if (mapTool == null)
+                    if (mapToolInfo == null)
                         continue;
                 }
-                var heldTool = bestTools[toolType];
-                if (heldTool == null || mapTool[toolType] > heldTool[toolType])
+                var heldToolInfo = bestTools[toolType];
+                if (heldToolInfo == null || mapToolInfo.comp[toolType] > heldToolInfo.comp[toolType])
                 {
-                    if (heldTool != null)
-                        extraTools.AddDistinct(heldTool);
-                    toolsToGet.AddDistinct(mapTool);
+                    if (heldToolInfo != null)
+                        extraTools.AddDistinct(heldToolInfo.tool);
+                    toolsToGet.AddDistinct(mapToolInfo.tool);
                 }
             }
             // Make JobList

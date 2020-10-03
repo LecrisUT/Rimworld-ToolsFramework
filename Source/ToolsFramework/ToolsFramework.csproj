@@ -72,6 +72,8 @@
     <Compile Include="AI\JobDriver_PickTool.cs" />
     <Compile Include="Alerts\Alert_ToolNeedsReplacing.cs" />
     <Compile Include="BaseMod.cs" />
+    <Compile Include="Comps\CompProperties_Tool.cs" />
+    <Compile Include="HelperClasses.cs" />
     <Compile Include="Comps\Map_ToolTracker.cs" />
     <Compile Include="Comps\Pawn_ToolTracker.cs" />
     <Compile Include="Databases\Dictionaries.cs" />
@@ -110,7 +112,6 @@
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_DualWield_Ext_Pawn_EquipmentTracker.cs" />
-    <Compile Include="Harmony\ForbidUtility.cs" />
     <Compile Include="Harmony\Pawn_WorkSettings.cs" />
     <Compile Include="Harmony\PawnRenderer.cs" />
     <Compile Include="Harmony\FloatMenuMakerMap.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Harmony\ThingOwner.cs" />
     <Compile Include="Harmony\StatRequest.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Comps\ToolUse.cs" />
+    <Compile Include="Comps\ToolComp.cs" />
     <Compile Include="Stats\StatPart_Settings.cs" />
     <Compile Include="Stats\StatPart_StuffEffect.cs" />
     <Compile Include="Stats\StatWorker_ToolEffectivenessFactor.cs" />

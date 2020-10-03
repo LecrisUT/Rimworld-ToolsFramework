@@ -5,12 +5,18 @@ namespace ToolsFramework
 {
     public class ToolsForcedHandler : IExposable
     {
-        private HashSet<Tool> forcedTools = new HashSet<Tool>();
+        private HashSet<ThingWithComps> forcedTools = new HashSet<ThingWithComps>();
         public bool SomethingIsForced => !forcedTools.EnumerableNullOrEmpty();
-        public HashSet<Tool> ForcedTools => forcedTools;
+        public HashSet<ThingWithComps> ForcedTools => forcedTools;
         public void Reset() => forcedTools.Clear();
-        public void SetForced(Tool tool, bool forced)
+        public void SetForced(ThingWithComps tool, bool forced, bool checkIfTool = true)
         {
+            if (checkIfTool && !tool.IsTool())
+            {
+                if (forcedTools.Contains(tool))
+                    forcedTools.Remove(tool);
+                return;
+            }
             if (forced && !forcedTools.Contains(tool))
                 forcedTools.Add(tool);
             else if (!forced && forcedTools.Contains(tool))

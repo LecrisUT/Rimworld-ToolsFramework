@@ -85,11 +85,11 @@ namespace ToolsFramework.AutoPatcher
 #endif
                     return val;
                 }
-                if (pawn.CanUseTools(out var tracker2) && tracker2.toolInUse is Tool tool2)
+                if (pawn.CanUseTools(out var tracker2) && tracker2.toolInUse != null)
                 {
-                    tool2.TryGetValue(billGiver, stat, out var fac, out var off, toolType2);
+                    tracker2.toolInUse.TryGetToolValue(billGiver, stat, out var fac, out var off, toolType2);
 #if DEBUG
-                    Log.Message($"Test 1.4: Use tool {pawn} : {tool2} : {stat} : {billGiver} : {job.RecipeDef} : {val} -> {(val + off) * fac}");
+                    Log.Message($"Test 1.4: Use tool {pawn} : {tracker2.toolInUse} : {stat} : {billGiver} : {job.RecipeDef} : {val} -> {(val + off) * fac}");
 #endif
                     return (val + off) * fac;
                 }
@@ -106,11 +106,11 @@ namespace ToolsFramework.AutoPatcher
 #endif
                 return val;
             }
-            if (pawn.CanUseTools(out var tracker) && tracker.toolInUse is Tool tool)
+            if (pawn.CanUseTools(out var tracker) && tracker.toolInUse != null)
             {
-                tool.TryGetValue(job.def, stat, out var fac, out var off, toolType);
+                tracker.toolInUse.TryGetToolValue(job.def, stat, out var fac, out var off, toolType);
 #if DEBUG
-                Log.Message($"Test 1.1: Use tool {pawn} : {tool} : {stat} : {job.def} : {val} -> {(val + off) * fac}");
+                Log.Message($"Test 1.1: Use tool {pawn} : {tracker.toolInUse} : {stat} : {job.def} : {val} -> {(val + off) * fac}");
 #endif
                 return (val + off) * fac;
             }

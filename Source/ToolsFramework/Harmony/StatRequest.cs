@@ -14,7 +14,7 @@ namespace ToolsFramework.Harmony
     {
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(StatRequest), "For", new Type[] { typeof(Thing)})]
-        public static StatRequest For(Tool tool, ToolType toolType)
+        public static StatRequest For(ThingWithComps tool, ToolType toolType)
         {
             IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
@@ -53,12 +53,12 @@ namespace ToolsFramework.Harmony
         {
             if (___defInt is ToolType toolType)
             {
-                var tool = ___thingInt as Tool;
+                var tool = ___thingInt as ThingWithComps;
                 var thingDef = ___thingInt?.def;
                 var modifiers = new List<StatModifier>(toolType.workStatFactors);
                 var effectiveness = new StatModifier() { stat = StatDefOf.ToolEffectivenessFactor, value = 1f };
                 effectiveness.value *= thingDef?.statBases.GetStatFactorFromList(StatDefOf.ToolEffectivenessFactor) ?? 1f;
-                effectiveness.value *= tool?.ToolProperties?.toolTypesValue.GetToolTypeValueFromList(toolType, 1f) ?? 1f;
+                effectiveness.value *= tool?.ToolCompProp()?.toolTypesValue.GetToolTypeValueFromList(toolType, 1f) ?? 1f;
                 modifiers.Add(effectiveness);
                 __result = modifiers;
                 return false;

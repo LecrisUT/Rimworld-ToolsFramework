@@ -13,10 +13,9 @@ namespace ToolsFramework
             nextOptimizationTick = Find.TickManager.TicksGame;
         }
 
-        public Tool toolInUse = null;
-        public List<Tool> memoryTool = new List<Tool>();
-        public ThingWithComps memoryEquipment = null;
-        public ThingWithComps memoryEquipmentOffHand = null;
+        public ThingWithComps toolInUse = null;
+        public List<ThingWithComps> memoryTool = new List<ThingWithComps>();
+        public List<ThingWithComps> memoryEquipment = new List<ThingWithComps>();
 
         public bool transfering = false;
 
@@ -71,8 +70,7 @@ namespace ToolsFramework
         {
             Scribe_References.Look(ref toolInUse, "toolInUse");
             Scribe_Collections.Look(ref memoryTool, "memoryTool", LookMode.Reference);
-            Scribe_References.Look(ref memoryEquipment, "memoryEquipment");
-            Scribe_References.Look(ref memoryEquipmentOffHand, "memoryEquipmentOffHand");
+            Scribe_Collections.Look(ref memoryEquipment, "memoryEquipment", LookMode.Reference);
 
             Scribe_Values.Look(ref nextOptimizationTick, "nextOptimizationTick", 0);
             Scribe_Values.Look(ref optimizingTool, "optimizingTool", false);
@@ -85,8 +83,7 @@ namespace ToolsFramework
             {
                 toolInUse = toolInUse.DestroyedOrNull() ? null : toolInUse;
                 memoryTool.RemoveAll(t => t.DestroyedOrNull());
-                memoryEquipment = memoryEquipment.DestroyedOrNull() ? null : memoryEquipment;
-                memoryEquipmentOffHand = memoryEquipmentOffHand.DestroyedOrNull() ? null : memoryEquipmentOffHand;
+                memoryEquipment.RemoveAll(t => t.DestroyedOrNull());
             }
         }
     }

@@ -1,19 +1,14 @@
 ﻿using HarmonyLib;
 using RimWorld;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using UnityEngine.SocialPlatforms;
 using Verse;
 using Verse.AI;
 
 namespace ToolsFramework.Harmony
 {
-    // Alternative implementation used with copy-pasted WorkGiver
-
     [HarmonyPatch(typeof(Pawn_JobTracker))]
     [HarmonyPatch(nameof(Pawn_JobTracker.TryOpportunisticJob))]
     public static class Patch_Pawn_JobTracker_TryOpportunisticJob
@@ -59,16 +54,23 @@ namespace ToolsFramework.Harmony
             if (!pawn.CanUseTools(out var tracker) || pawn.InMentalState || pawn.IsBurning())
                 return false;
             var jobDef = currJob.def;
-            var toolType = Dictionaries.jobToolType.TryGetValue(jobDef);
+            ToolType toolType;
+            if (jobDef == RimWorld.JobDefOf.DoBill)
+            {
+                var billGiver = currJob.targetA.Thing.def;
+                toolType = Dictionaries.billGiverToolType.TryGetValue(billGiver);
+            }
+            else
+                toolType = Dictionaries.jobToolType.TryGetValue(jobDef);
             var toolList = tracker.memoryTool.ToList();
             if (toolType != null)
-                toolList.RemoveAll(t => t.ToolTypes.Contains(toolType));
+                toolList.RemoveAll(t => t.ToolTypes().Contains(toolType));
             // Return tool
             if (!toolList.NullOrEmpty() && jobDef.allowOpportunisticPrefix && !jobDef.IsReturningTool())
             {
                 bool foundPos = false;
                 IntVec3 bestPos = pawn.PositionHeld;
-                Tool tool = null;
+                ThingWithComps tool = null;
                 IntVec3 pawnPos = pawn.PositionHeld;
                 foreach (var currTool in toolList)
                     if (HaulAIUtility.CanHaulAside(pawn, currTool, out var pos))

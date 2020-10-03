@@ -2,23 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using ToolsFramework.Harmony;
-using UnityEngine;
 using Verse;
 
 namespace ToolsFramework
 {
     public static class ToolExtensions
     {
-        public static float GetStatValue(this Tool tool, ToolType toolType, StatDef stat, bool applyPostProcess = true, float fallback = 0f)
-        {
-            if (tool == null)
-                return fallback;
-            return stat.Worker.GetValue(tool, toolType, applyPostProcess);
-        }
-        public static float GetValue(this StatWorker statWorker, Tool tool, ToolType toolType, bool applyPostProcess = true)
-        {
-            return statWorker.GetValue(Patch_StatRequest_For.For(tool, toolType), applyPostProcess);
-        }
         public static bool ToolTypeListContains(this List<ToolTypeModifier> modList, ToolType toolType, out ToolTypeModifier modifier)
         {
             modifier = null;
@@ -58,7 +47,7 @@ namespace ToolsFramework
             return defaultValue;
         }
         #region ToolDef extenstion
-        public static bool TryGetValue(this ToolProperties toolProp, ToolType toolType, out float val, ThingDef stuffDef = null)
+        public static bool TryGetValue(this CompProperties_Tool toolProp, ToolType toolType, out float val, ThingDef stuffDef = null)
         {
             val = 0f;
             if (!toolProp.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
@@ -66,7 +55,7 @@ namespace ToolsFramework
             val = modifier.value * toolType.GetStuffEfficiency(stuffDef);
             return true;
         }
-        public static float GetValue(this ToolProperties toolProp, ToolType toolType, float fallback = 0f, ThingDef stuffDef = null)
+        public static float GetValue(this CompProperties_Tool toolProp, ToolType toolType, float fallback = 0f, ThingDef stuffDef = null)
         {
             if (toolProp.TryGetValue(toolType, out float val, stuffDef))
                 return val;
@@ -75,7 +64,7 @@ namespace ToolsFramework
         public static bool TryGetValue(this ToolDef toolDef, ToolType toolType, out float val, ThingDef stuffDef = null)
         {
             val = 0f;
-            if (!toolDef.ToolProperties.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
+            if (!toolDef.CompProp.toolTypesValue.ToolTypeListContains(toolType, out var modifier))
                 return false;
             val = modifier.value * toolType.GetStuffEfficiency(stuffDef);
             return true;
@@ -87,50 +76,42 @@ namespace ToolsFramework
             return fallback;
         }
         #endregion
-        #region Tool extension
-        public static bool TryGetValue(this Tool tool, ToolType toolType, out float val)
+        #region ToolComp Extension
+        public static bool TryGetValue(this ToolComp comp, ToolType toolType, out float val)
         {
             val = 0f;
-            if (tool == null || !tool.ToolTypes.Contains(toolType))
+            if (!comp.ToolTypes.Contains(toolType))
                 return false;
-            val = tool.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor);
+            val = comp.parent.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, JobDef job, out float val, ToolType toolType = null)
+        public static bool TryGetValue(this ToolComp comp, JobDef job, out float val, ToolType toolType = null)
         {
             val = 0f;
-            if (tool == null)
-                return false;
             if (toolType == null && !Dictionaries.jobToolType.TryGetValue(job, out toolType))
                 return false;
-            if (!tool.TryGetValue(toolType, out val))
+            if (!comp.TryGetValue(toolType, out val))
                 return false;
-            var toolProp = tool.ToolProperties;
-            val *= toolProp.jobBonus.GetJobValueFromList(job, 1f);
+            val *= comp.CompProp.jobBonus.GetJobValueFromList(job, 1f);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, ThingDef billGiver, out float val, ToolType toolType = null)
+        public static bool TryGetValue(this ToolComp comp, ThingDef billGiver, out float val, ToolType toolType = null)
         {
             val = 0f;
-            if (tool == null)
-                return false;
             if (toolType == null && !Dictionaries.billGiverToolType.TryGetValue(billGiver, out toolType))
                 return false;
-            if (!tool.TryGetValue(toolType, out val))
+            if (!comp.TryGetValue(toolType, out val))
                 return false;
-            var toolProp = tool.ToolProperties;
-            val *= toolProp.billGiverBonus.GetBillGiverValueFromList(billGiver, 1f);
+            val *= comp.CompProp.billGiverBonus.GetBillGiverValueFromList(billGiver, 1f);
             return true;
         }
-        public static bool TryGetValue(this Tool tool, ThingDef billGiver, StatDef stat, out float factor, out float offset, ToolType toolType = null)
+        public static bool TryGetValue(this ToolComp comp, ThingDef billGiver, StatDef stat, out float factor, out float offset, ToolType toolType = null)
         {
             factor = 1f;
             offset = 0f;
-            if (tool == null)
-                return false;
             if (toolType == null && !Dictionaries.billGiverToolType.TryGetValue(billGiver, out toolType))
                 return false;
-            if (!tool.TryGetValue(billGiver, out var val, toolType))
+            if (!comp.TryGetValue(billGiver, out var val, toolType))
                 return false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
             if (factor != 0f)
@@ -142,15 +123,13 @@ namespace ToolsFramework
                 offset = val - offset;
             return true;
         }
-        public static bool TryGetValue(this Tool tool, JobDef job, StatDef stat, out float factor, out float offset, ToolType toolType = null)
+        public static bool TryGetValue(this ToolComp comp, JobDef job, StatDef stat, out float factor, out float offset, ToolType toolType = null)
         {
             factor = 1f;
             offset = 0f;
-            if (tool == null)
-                return false;
             if (toolType == null && !Dictionaries.jobToolType.TryGetValue(job, out toolType))
                 return false;
-            if (!tool.TryGetValue(job, out var val, toolType))
+            if (!comp.TryGetValue(job, out var val, toolType))
                 return false;
             bool flag = false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
@@ -169,11 +148,11 @@ namespace ToolsFramework
             }
             return flag;
         }
-        public static bool TryGetValue(this Tool tool, ToolType toolType, StatDef stat, out float factor, out float offset)
+        public static bool TryGetValue(this ToolComp comp, ToolType toolType, StatDef stat, out float factor, out float offset)
         {
             factor = 1f;
             offset = 0f;
-            if (tool == null || !tool.TryGetValue(toolType, out var val))
+            if (!comp.TryGetValue(toolType, out var val))
                 return false;
             bool flag = false;
             factor = toolType.workStatFactors.GetStatValueFromList(stat, 0f);
@@ -192,25 +171,98 @@ namespace ToolsFramework
             }
             return flag;
         }
-        public static float GetValue(this Tool tool, ToolType toolType, float fallback = 0f)
+        public static float GetValue(this ToolComp comp, ToolType toolType, float fallback = 0f)
         {
-            if (tool.TryGetValue(toolType, out float val))
+            if (comp.TryGetValue(toolType, out float val))
                 return val;
             return fallback;
         }
-        public static float GetValue(this Tool tool, JobDef job, float fallback = 0f)
+        public static float GetValue(this ToolComp comp, JobDef job, ToolType toolType = null, float fallback = 0f)
         {
-            if (tool.TryGetValue(job, out float val))
+            if (comp.TryGetValue(job, out float val, toolType))
                 return val;
             return fallback;
         }
-        public static bool IsForced(this Tool tool)
+        public static bool IsForced(this ToolComp comp)
         {
-            if (!(tool.HoldingPawn is Pawn pawn) || !pawn.CanUseTools(out var tracker))
+            if (!(comp.HoldingPawn is Pawn pawn) || !pawn.CanUseTools(out var tracker))
                 return false;
-            return tracker.forcedHandler.ForcedTools.Contains(tool);
+            return tracker.forcedHandler.ForcedTools.Contains(comp.parent);
         }
-        public static bool CanDrop(this Tool tool) => !tool.IsForced();
+        public static bool CanDrop(this ToolComp comp) => !comp.IsForced();
+        #endregion
+        #region ThingWithComps Extension
+        public static bool TryGetToolValue(this ThingWithComps thing, ToolType toolType, out float val)
+        {
+            val = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(toolType, out val);
+        }
+        public static bool TryGetToolValue(this ThingWithComps thing, JobDef job, out float val, ToolType toolType = null)
+        {
+            val = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(job, out val, toolType);
+        }
+        public static bool TryGetToolValue(this ThingWithComps thing, ThingDef billGiver, out float val, ToolType toolType = null)
+        {
+            val = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(billGiver, out val, toolType);
+        }
+        public static bool TryGetToolValue(this ThingWithComps thing, ThingDef billGiver, StatDef stat, out float factor, out float offset, ToolType toolType = null)
+        {
+            factor = 1f;
+            offset = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(billGiver, stat, out factor, out offset, toolType);
+        }
+        public static bool TryGetToolValue(this ThingWithComps thing, JobDef job, StatDef stat, out float factor, out float offset, ToolType toolType = null)
+        {
+            factor = 1f;
+            offset = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(job, stat, out factor, out offset, toolType);
+        }
+        public static bool TryGetToolValue(this ThingWithComps thing, ToolType toolType, StatDef stat, out float factor, out float offset)
+        {
+            factor = 1f;
+            offset = 0f;
+            if (!thing.IsTool(out var comp))
+                return false;
+            return comp.TryGetValue(toolType, stat, out factor, out offset);
+        }
+        public static float GetToolValue(this ThingWithComps thing, ToolType toolType, float fallback = 0f)
+        {
+            if (thing.IsTool(out var comp) && comp.TryGetValue(toolType, out float val))
+                return val;
+            return fallback;
+        }
+        public static float GetToolValue(this ThingWithComps thing, JobDef job, float fallback = 0f)
+        {
+            if (thing.IsTool(out var comp) && comp.TryGetValue(job, out float val))
+                return val;
+            return fallback;
+        }
+        public static float GetStatValue(this ThingWithComps tool, ToolType toolType, StatDef stat, bool applyPostProcess = true, float fallback = 0f)
+        {
+            if (tool == null)
+                return fallback;
+            return stat.Worker.GetValue(tool, toolType, applyPostProcess);
+        }
+        public static float GetValue(this StatWorker statWorker, ThingWithComps tool, ToolType toolType, bool applyPostProcess = true)
+        {
+            return statWorker.GetValue(Patch_StatRequest_For.For(tool, toolType), applyPostProcess);
+        }
+        public static bool IsForced(this ThingWithComps thing)
+            => thing.IsTool(out var comp) && comp.IsForced();
+        public static bool CanDrop(this ThingWithComps thing)
+            => !thing.IsTool(out var comp) || !comp.IsForced();
         #endregion
     }
 }

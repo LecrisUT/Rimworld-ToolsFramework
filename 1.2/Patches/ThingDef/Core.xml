@@ -26,8 +26,8 @@
 					<li Class="PatchOperationAdd">
 						<xpath>/Defs/ThingDef[defName="WoodLog"]/stuffProps/statFactors</xpath>
 						<value>
-							<Tool_Hardness>0.6</Tool_Hardness>
-							<Tool_Sharpness>0.8</Tool_Sharpness>
+							<Tool_Hardness>0.8</Tool_Hardness>
+							<Tool_Sharpness>0.9</Tool_Sharpness>
 						</value>
 					</li>
 				</operations>
@@ -67,29 +67,11 @@
 			<!-- Stone -->
 			<li Class="PatchOperationSequence">
 				<operations>
-					<!--li Class="PatchOperationConditional">
-						<xpath>/Defs/ThingDef[defName="BlocksSandstone" or "BlocksGranite" or "BlocksLimestone" or "BlocksSlate" or "BlocksMarble"]/stuffProps</xpath>
-						<nomatch Class="PatchOperationAdd">
-							<xpath>/Defs/ThingDef[defName="BlocksSandstone" or "BlocksGranite" or "BlocksLimestone" or "BlocksSlate" or "BlocksMarble"]</xpath>
-							<value>
-								<stuffProps/>
-							</value>
-						</nomatch>
-					</li>
-					<li Class="PatchOperationConditional">
-						<xpath>/Defs/ThingDef[defName="BlocksSandstone" or "BlocksGranite" or "BlocksLimestone" or "BlocksSlate" or "BlocksMarble"]/stuffProps/statFactors</xpath>
-						<nomatch Class="PatchOperationAdd">
-							<xpath>/Defs/ThingDef[defName="BlocksSandstone" or "BlocksGranite" or "BlocksLimestone" or "BlocksSlate" or "BlocksMarble"]/stuffProps</xpath>
-							<value>
-								<statFactors/>
-							</value>
-						</nomatch>
-					</li-->
 					<li Class="PatchOperationAdd">
 						<xpath>/Defs/ThingDef[defName="BlocksSandstone" or defName="BlocksGranite" or defName="BlocksLimestone" or defName="BlocksSlate" or defName="BlocksMarble"]/stuffProps/statFactors</xpath>
 						<value>
-							<Tool_Hardness>0.8</Tool_Hardness>
-							<Tool_Sharpness>0.6</Tool_Sharpness>
+							<Tool_Hardness>0.9</Tool_Hardness>
+							<Tool_Sharpness>0.8</Tool_Sharpness>
 						</value>
 					</li>
 				</operations>
