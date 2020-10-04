@@ -5,6 +5,7 @@ using Verse;
 using HarmonyLib;
 using ToolsFramework.Harmony;
 using Verse.AI;
+using RimWorld;
 
 namespace ToolsFramework
 {
@@ -43,6 +44,25 @@ namespace ToolsFramework
             }
             else
                 ToolsFramework.Settings.AllITool = true;
+            var stats = new List<StatDef>();
+            foreach (var tdef in DefDatabase<ThingDef>.AllDefs.Where(t => t.HasComp(typeof(ToolComp))))
+            {
+                var compProp = tdef.ToolCompProp();
+                compProp.statsAffected = compProp.ToolTypes.SelectMany(t => t.workStatFactors.Select(tt => tt.stat)).ToList();
+                compProp.statsAffected.AddRange(compProp.ToolTypes.SelectMany(t => t.workStatOffset.Select(tt => tt.stat)));
+                compProp.statsAffected.RemoveDuplicates();
+                stats.AddRange(compProp.statsAffected);
+            }
+            stats.RemoveDuplicates();
+            foreach (var stat in stats)
+            {
+                if (stat.parts == null)
+                    stat.parts = new List<StatPart>();
+                var statPart = new StatPart_Tool() { parentStat = stat };
+                foreach (var toolType in DefDatabase<ToolType>.AllDefs.Where(t => t.workStatFactors.Any(tt => tt.stat == stat) || t.workStatOffset.Any(tt => tt.stat == stat)))
+                    statPart.ToolTypes.Add(toolType);
+                stat.parts.Add(statPart);
+            }
         }
     }
 }

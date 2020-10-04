@@ -9,7 +9,7 @@ namespace ToolsFramework.Harmony
     {
         public static bool Prefix(ref bool __result, Pawn ___pawn)
         {
-            if (___pawn.CanUseTools(out var tracker) && tracker.toolInUse.ToolComp().DrawTool)
+            if (___pawn.CanUseTools(out var tracker) && (tracker.toolInUse?.ToolComp().DrawTool ?? false))
             {
                 __result = true;
                 return false;

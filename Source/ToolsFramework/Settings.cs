@@ -32,6 +32,7 @@ namespace ToolsFramework
 
         public static int DictionaryCache = 3000;
         public static bool AllITool = false;
+        public static int ResetStatPartTick = 5000;
 
         private Vector2 scrollPosition = Vector2.zero;
         public void DoWindowContents(Rect wrect)

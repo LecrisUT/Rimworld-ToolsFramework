@@ -81,7 +81,6 @@
     <Compile Include="DefOf\JobDefOf.cs" />
     <Compile Include="DefOf\StatCategoryDefOf.cs" />
     <Compile Include="DefOf\StatDefOf.cs" />
-    <Compile Include="Def\AutoPatcher\StatPatch.cs" />
     <Compile Include="Def\AutoPatcher\JobDef_EndNode.cs" />
     <Compile Include="Def\AutoPatcher\WorkGiver_EndNode.cs" />
     <Compile Include="Def\AutoPatcher\ToilPatch.cs" />
@@ -99,15 +98,10 @@
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
     <Compile Include="Harmony\AwesomeInventory_JobGiver_AwesomeInventory_TakeArm.cs" />
-    <Compile Include="Harmony\Toil.cs" />
-    <Compile Include="Harmony\InteractionWorker.cs" />
-    <Compile Include="Harmony\GenRecipe.cs" />
     <Compile Include="Harmony\JobDriver_DoBill.cs" />
     <Compile Include="Harmony\JobDriver.cs" />
-    <Compile Include="Harmony\Toils_Recipe.cs" />
     <Compile Include="Harmony\WorkTab_FavouriteManager.cs" />
     <Compile Include="Harmony\WorkTab_PriorityTracker.cs" />
-    <Compile Include="Harmony\StatWorker.cs" />
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_DualWield_Ext_Pawn_EquipmentTracker.cs" />
@@ -119,6 +113,7 @@
     <Compile Include="Harmony\StatRequest.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Comps\ToolComp.cs" />
+    <Compile Include="Stats\StatPart_Tool.cs" />
     <Compile Include="Stats\StatPart_Settings.cs" />
     <Compile Include="Stats\StatPart_StuffEffect.cs" />
     <Compile Include="Stats\StatWorker_ToolEffectivenessFactor.cs" />

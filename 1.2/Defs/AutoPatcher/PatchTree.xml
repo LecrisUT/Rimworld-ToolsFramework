@@ -30,11 +30,6 @@
                 <name>StatSearch</name>
             </li>
             <li Class="AutoPatcher.Node">
-                <nodeDef>ToolsFramework_StatPatch</nodeDef>
-                <DebugLevel>0</DebugLevel>
-                <name>StatPatch</name>
-            </li>
-            <li Class="AutoPatcher.Node">
                 <nodeDef>AP_ActionSearch</nodeDef>
                 <DebugLevel>0</DebugLevel>
                 <name>ActionSearch</name>
@@ -117,16 +112,6 @@
                 <outputNodeName>StatSearch</outputNodeName>
                 <inputNodeName>JobDef_EndNode</inputNodeName>
                 <outputPortGroup>0</outputPortGroup>
-            </li>
-            <li>
-                <outputNodeName>StatSearch</outputNodeName>
-                <inputNodeName>StatPatch</inputNodeName>
-                <outputPortGroup>0</outputPortGroup>
-            </li>
-            <li>
-                <outputNodeName>StatSearch</outputNodeName>
-                <inputNodeName>StatPatch</inputNodeName>
-                <outputPortGroup>2</outputPortGroup>
             </li>
             <li>
                 <outputNodeName>JobDrivers</outputNodeName>

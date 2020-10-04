@@ -8,11 +8,6 @@
         </driverException>
     </AutoPatcher.BeginDriver>
 
-    <AutoPatcher.AP_StatPatch>
-        <defName>ToolsFramework_StatPatch</defName>
-        <HelperType>ToolsFramework.AutoPatcher.StatPatch</HelperType>
-    </AutoPatcher.AP_StatPatch>
-
     <AutoPatcher.AP_ToilPatch>
         <defName>ToolsFramework_ToilPatch</defName>
         <HelperType>ToolsFramework.AutoPatcher.ToilPatch</HelperType>

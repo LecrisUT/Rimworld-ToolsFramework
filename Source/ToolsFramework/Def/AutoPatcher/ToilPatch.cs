@@ -201,6 +201,12 @@ namespace ToolsFramework.AutoPatcher
                 info.comp.InUse = false;
                 tracker.toolInUse = null;
                 tracker.memoryEquipment.Clear();
+                foreach (var stat in info.comp.CompProp.statsAffected)
+                {
+                    var dict = stat.GetStatPart<StatPart_Tool>().CachedRequests;
+                    if (dict.ContainsKey(pawn))
+                        dict.Remove(pawn);
+                }
             });
             toil.AddFailCondition(delegate
             {
