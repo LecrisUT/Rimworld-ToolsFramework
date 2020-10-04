@@ -172,7 +172,7 @@ namespace ToolsFramework.AutoPatcher
 #if DEBUG
             var test = new System.Text.StringBuilder($"Test 3.1: {tracker.UsedHandler.BestTool[toolType]}\n");
             foreach (var a in tracker.UsedHandler.BestTool)
-                test.AppendLine($"{a.Key} : {a.Value}");
+                test.AppendLine($"{a.Key} : {a.Value?.tool}");
             Log.Message(test.ToString());
 #endif
             if (info != null)

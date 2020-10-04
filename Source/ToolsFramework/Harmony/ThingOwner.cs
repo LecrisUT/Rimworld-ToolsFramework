@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using Verse;
+using System.Linq;
 using RimWorld;
 
 namespace ToolsFramework.Harmony
@@ -17,9 +18,10 @@ namespace ToolsFramework.Harmony
             Pawn pawn = __instance.Owner.HoldingPawn(true);
             if (pawn != null && pawn.CanUseTools(out var tracker) && !tracker.transfering)
             {
-                tracker.UsedHandler.HeldToolsList.AddDistinct(new ToolInfo(thing, comp));
+                if (!tracker.UsedHandler.HeldTools.Contains(thing))
+                    tracker.UsedHandler.HeldToolsList.Add(new ToolInfo(thing, comp));
                 if (pawn.CurJobDef.IsTakingTempTool())
-                    tracker.memoryTool.Add(thing);
+                    tracker.memoryTool.AddDistinct(thing);
 #if DEBUG
                 var test = new System.Text.StringBuilder($"Test 1.0: Tool pick-up: {pawn} : {thing}\nHeldTools:\n");
                 foreach (var a in tracker.UsedHandler.HeldTools)

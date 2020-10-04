@@ -140,7 +140,6 @@ namespace ToolsFramework
                 return;
             if (!tracker.UsedHandler.HeldTools.Contains(tool))
                 return;
-            bool equipTool = true;
             if (tool is Apparel ap)
             {
                 var apparel = pawn.apparel;
@@ -161,6 +160,7 @@ namespace ToolsFramework
             }
             else
             {
+                bool equipTool = true;
                 var equipment = pawn.equipment;
                 var primary = equipment.Primary;
                 if (primary != null)
@@ -195,7 +195,8 @@ namespace ToolsFramework
                 if (!ap.Destroyed && !tracker.memoryEquipment.Contains(ap))
                     apThingOwner.TryTransferToContainer(ap, pawn.inventory.innerContainer);
                 foreach (var eq in tracker.memoryEquipment)
-                    pawn.inventory.innerContainer.TryTransferToContainer(eq, apThingOwner);
+                    if (!apparel.Contains(eq))
+                        pawn.inventory.innerContainer.TryTransferToContainer(eq, apThingOwner);
             }
             else
             {
@@ -204,6 +205,8 @@ namespace ToolsFramework
                     equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
                 foreach (var eq in tracker.memoryEquipment)
                 {
+                    if (eq == equipment.Primary)
+                        continue;
                     bool flag = equipment.Primary != null;
                     pawn.inventory.innerContainer.TryTransferToContainer(eq, equipment.GetDirectlyHeldThings());
                     if (flag)
