@@ -108,7 +108,6 @@
     <Compile Include="Harmony\WorkTab_FavouriteManager.cs" />
     <Compile Include="Harmony\WorkTab_PriorityTracker.cs" />
     <Compile Include="Harmony\StatWorker.cs" />
-    <Compile Include="Harmony\ThingDef.cs" />
     <Compile Include="Harmony\Pawn_JobTracker.cs" />
     <Compile Include="Harmony\Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\DualWield_DualWield_Ext_Pawn_EquipmentTracker.cs" />

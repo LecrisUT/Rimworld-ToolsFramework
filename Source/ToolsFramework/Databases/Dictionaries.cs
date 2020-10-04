@@ -12,6 +12,7 @@ namespace ToolsFramework
         public static Dictionary<Map, Map_ToolTracker> MapToolTrackers = new Dictionary<Map, Map_ToolTracker>();
         public static Dictionary<StatDef, float> StatPartSettings = new Dictionary<StatDef, float>();
         public static Dictionary<Pawn, Pawn_ToolTracker> PawnToolTrackers = new Dictionary<Pawn, Pawn_ToolTracker>();
+        public static HashSet<ThingDef> PawnCanUseTools = new HashSet<ThingDef>();
         public static Dictionary<ThingWithComps, ToolComp> ThingTools = new Dictionary<ThingWithComps, ToolComp>();
     }
 }

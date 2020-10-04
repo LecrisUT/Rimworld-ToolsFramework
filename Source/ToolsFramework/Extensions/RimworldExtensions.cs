@@ -107,13 +107,15 @@ namespace ToolsFramework
             }
             return tracker;
         }
-        public static bool CanUseTools(this Pawn pawn, bool addToDictionary = true)
-            => pawn.CanUseTools(out _, addToDictionary);
+        //public static bool CanUseTools(this Pawn pawn, bool addToDictionary = true)
+        //    => pawn.CanUseTools(out _, addToDictionary);
         public static bool CanUseTools(this Pawn pawn, out Pawn_ToolTracker tracker, bool addToDictionary = true)
         {
-            tracker = null;
-            if (pawn == null)
+            if (pawn == null || !Dictionaries.PawnCanUseTools.Contains(pawn.kindDef.race))
+            {
+                tracker = null;
                 return false;
+            }
             if (!Dictionaries.PawnToolTrackers.TryGetValue(pawn, out tracker))
             {
                 tracker = pawn.GetComp<Pawn_ToolTracker>();

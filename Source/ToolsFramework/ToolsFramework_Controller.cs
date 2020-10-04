@@ -17,6 +17,7 @@ namespace ToolsFramework
                 if (tDef.comps == null)
                     tDef.comps = new List<CompProperties>();
                 tDef.comps.Add(new CompProperties(typeof(Pawn_ToolTracker)));
+                Dictionaries.PawnCanUseTools.Add(tDef);
             }
             var harmony = new HarmonyLib.Harmony("ToolsFramework");
             if (ModsConfig.IsActive("roolo.dualwield") || ModsConfig.IsActive("roolo.dualwield_local") || ModsConfig.IsActive("roolo.dualwield_steam") || ModsConfig.IsActive("roolo.dualwield_copy"))
