@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace ToolsFramework
 {
@@ -89,13 +90,16 @@ namespace ToolsFramework
             foreach (var toolType in ToolTypes)
                 yield return Utility.ToolTypeDrawEntry(parent, toolType, parent.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor));
         }
-        public override void PostDestroy(DestroyMode mode, Map previousMap)
+        public override void PostPostApplyDamage(DamageInfo dinfo, float totalDamageDealt)
         {
-            base.PostDestroy(mode, previousMap);
-            if (!HoldingPawn.CanUseTools(out var tracker))
+            // ParentHolder is nullified in PostDestroy
+            if (totalDamageDealt < parent.HitPoints || !HoldingPawn.CanUseTools(out var tracker))
                 return;
             tracker.UsedHandler.HeldToolsList.RemoveAll(t => t.tool == parent);
             tracker.forcedHandler.ForcedTools.Remove(parent);
+            var jobDef = HoldingPawn.CurJobDef;
+            if (jobDef != null && (jobDef == RimWorld.JobDefOf.DoBill || Dictionaries.jobToolType.ContainsKey(jobDef)))
+                HoldingPawn.jobs.EndCurrentJob(JobCondition.InterruptOptional, true, true);
         }
     }
 }
