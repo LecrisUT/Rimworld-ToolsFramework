@@ -26,7 +26,6 @@ namespace ToolsFramework
         {
             if (!((ThingDef)def).useHitPoints)
                 return float.PositiveInfinity;
-            var props = def.GetModExtension<ToolProperties>();
             // For def
             if (thing == null)
                 return GenDate.TicksToDays(Mathf.RoundToInt(BaseWearInterval * def.GetStatValueAbstract(RimWorld.StatDefOf.MaxHitPoints, stuffDef) /

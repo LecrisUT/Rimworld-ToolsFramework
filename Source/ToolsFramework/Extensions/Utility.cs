@@ -15,7 +15,7 @@ namespace ToolsFramework
             get
             {
                 if (allToolDefs.EnumerableNullOrEmpty())
-                    allToolDefs = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool() && t.HasModExtension<ToolProperties>()).ToHashSet();
+                    allToolDefs = DefDatabase<ThingDef>.AllDefs.Where(t => t.IsTool()).ToHashSet();
                 return allToolDefs;
             }
         }

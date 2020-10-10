@@ -93,7 +93,6 @@
     <Compile Include="Extensions\Utility.cs" />
     <Compile Include="Extensions\JobModifier.cs" />
     <Compile Include="Extensions\ToolTypeModifier.cs" />
-    <Compile Include="Extensions\ToolProperties.cs" />
     <Compile Include="Def\ToolType.cs" />
     <Compile Include="Handlers\ToolsForcedHandler.cs" />
     <Compile Include="Handlers\ToolsUsedHandler.cs" />
