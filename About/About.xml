@@ -26,7 +26,7 @@
 		<packageId>Lecris.AutoPatcher</packageId>
 		<displayName>[LC]AutoPatcher</displayName>
 		<downloadUrl>https://github.com/LecrisUT/Rimworld-AutoPatcher/releases/latest</downloadUrl>
-		<!--steamWorkshopUrl>steam://url/CommunityFilePage/818773962</steamWorkshopUrl-->
+		<steamWorkshopUrl>steam://url/CommunityFilePage/2206567496</steamWorkshopUrl>
 	</li>
 	</modDependencies>
 	<loadAfter>

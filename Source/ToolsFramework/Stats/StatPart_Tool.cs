@@ -58,9 +58,9 @@ namespace ToolsFramework
                             throw new System.Exception("Unknown def");
                     }
 #if DEBUG
-                Log.Message($"[[LC]ToolsFramework] Cached value: {pawn} : {toolType} : {def} : {parentStat}\n+{offset} : x{factor} : {resetTick}");
+                Log.Message($"[[LC]ToolsFramework] Cached value: {pawn} : {toolType} : {def} : {parentStat}\n+{offset} : x{factor} = {(val + offset) * factor} : [resetTick = {resetTick}]");
 #endif
-                CachedRequests.Add(pawn, (factor, offset, resetTick));
+                CachedRequests.SetOrAdd(pawn, (factor, offset, resetTick));
             }
             val = (val + offset) * factor;
         }
