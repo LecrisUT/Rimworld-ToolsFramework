@@ -90,16 +90,23 @@ namespace ToolsFramework
             foreach (var toolType in ToolTypes)
                 yield return Utility.ToolTypeDrawEntry(parent, toolType, parent.GetStatValue(toolType, StatDefOf.ToolEffectivenessFactor));
         }
+        private (Pawn pawn, Pawn_ToolTracker tracker) tempPawnTracker = (null, null);
         public override void PostPostApplyDamage(DamageInfo dinfo, float totalDamageDealt)
         {
             // ParentHolder is nullified in PostDestroy
             if (totalDamageDealt < parent.HitPoints || !HoldingPawn.CanUseTools(out var tracker))
                 return;
-            tracker.UsedHandler.HeldToolsList.RemoveAll(t => t.tool == parent);
-            tracker.forcedHandler.ForcedTools.Remove(parent);
-            var jobDef = HoldingPawn.CurJobDef;
+            tempPawnTracker = (HoldingPawn, tracker);
+        }
+        public override void PostDestroy(DestroyMode mode, Map previousMap)
+        {
+            if (tempPawnTracker.pawn == null || tempPawnTracker.tracker == null)
+                return;
+            tempPawnTracker.tracker.UsedHandler.HeldToolsList.RemoveAll(t => t.tool == parent);
+            tempPawnTracker.tracker.forcedHandler.SetForced(parent, false, false);
+            var jobDef = tempPawnTracker.pawn.CurJobDef;
             if (jobDef != null && (jobDef == RimWorld.JobDefOf.DoBill || Dictionaries.jobToolType.ContainsKey(jobDef)))
-                HoldingPawn.jobs.EndCurrentJob(JobCondition.InterruptOptional, true, true);
+                tempPawnTracker.pawn.jobs.EndCurrentJob(JobCondition.InterruptOptional, true, true);
         }
     }
 }

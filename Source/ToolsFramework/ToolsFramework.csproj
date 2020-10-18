@@ -150,4 +150,10 @@
     <Exec Command="del &quot;$(_TextTransformResult)&quot;" />
     <Exec Command="&quot;$(_TransformExe)&quot; &quot;$(_TextTransform)&quot; -out &quot;$(_TextTransformResult)&quot;" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>if NOT $(ConfigurationName) == Debug (
+cd ..\..\
+call tar --exclude=.git* --exclude=Source --exclude=$(SolutionName).zip --exclude=*.pdb  -caf $(SolutionName).zip .
+)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -6,10 +6,6 @@ namespace ToolsFramework
 {
     public class JobDriver_ReturnToolToContainer : JobDriver_HaulToContainer
     {
-        public override bool TryMakePreToilReservations(bool errorOnFailed)
-        {
-            return true;
-        }
         protected override IEnumerable<Toil> MakeNewToils()
         {
             var tool = TargetThingA as ThingWithComps;
