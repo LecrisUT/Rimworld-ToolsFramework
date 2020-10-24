@@ -205,7 +205,7 @@ namespace ToolsFramework
                     equipment.TryTransferEquipmentToContainer(tool, pawn.inventory.innerContainer);
                 foreach (var eq in tracker.memoryEquipment)
                 {
-                    if (eq == equipment.Primary)
+                    if (eq == equipment.Primary || eq == tool)
                         continue;
                     bool flag = equipment.Primary != null;
                     pawn.inventory.innerContainer.TryTransferToContainer(eq, equipment.GetDirectlyHeldThings());
